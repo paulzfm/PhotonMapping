@@ -4,8 +4,11 @@ bool Plane::hit(const Ray& ray, double tmin, double tmax,
     double time, HitRecord& record) const
 {
     double denom = n.dot(ray.d);
-    if (denom != 0.0) {
+    if (denom != 0) {
         double t = -(n.dot(ray.o) + d) / denom;
+        if (t < 0) {
+            return false;
+        }
 
         // In valid interval?
         if (t < tmin || t > tmax) {

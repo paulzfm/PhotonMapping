@@ -74,8 +74,8 @@ void test()
     printf("building...\n");
     tracer.buildGlobalMap(3);
     printf("rendering...\n");
-    // tracer.render();
-    tracer.renderMap();
+    tracer.render();
+    // tracer.renderMap();
     printf("done\n");
 
     img.WriteTga("myout.tga", true);

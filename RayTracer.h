@@ -13,7 +13,7 @@
 #define CAUSTICS_MAP 1
 
 #define NUM_GLOBAL_PHOTONS 10000
-#define MAX_DEPTH 10
+#define MAX_DEPTH 3
 #define Ia 1.0 //ambient
 #define Ka 0.2 //ambient
 #define Id 1.0 //diffuse

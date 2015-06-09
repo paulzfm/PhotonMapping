@@ -87,13 +87,15 @@ void RayTracer::render()
     for (int i = 0; i < _width; i++) {
         for (int j = 0; j < _height; j++) {
             Vector dir((float)i - (float)_width/2.0f, (float)j - (float)_height/2.0f, -200.0f);
-            dir = dir - eye;
-            dir.normalize();
-            _img->set(i, j, pixelColor(Ray(eye, dir), 0));
-            // TraceRecord record = _scene.intersect(Ray(eye, dir));
-            // if (record.hit) {
-                // _img->set(i, j, record.color);
+            dir = (dir - eye).normalize();
+
+            // HitRecord output;
+            // if (_scene._objects[6]->hit(Ray(eye, dir), 0, 1000000, 0, output)) {
+// std::cout << eye + output.t * dir << ", " << output.n << ", " << output.t << std::endl;
             // }
+
+
+            _img->set(i, j, pixelColor(Ray(eye, dir), 0));
         }
     }
 }
@@ -117,21 +119,22 @@ RGB RayTracer::pixelColor(const Ray& ray, int depth)
 
     if (record.hit) {
         Vector line = (light.pos - record.v).normalize();
-        Vector ref = record.n * 2 * record.n.dot(line) - line;
+        double v_dot = record.n.dot(line);
+        Vector ref = record.n * 2 * v_dot - line;
         double specular = pow(ref.dot(-ray.d), specular_power);
-        double intensity = Ia*Ka+(Id*Kd*record.n.dot(line));
+        double intensity = Ia*Ka+(Id*Kd*v_dot);
 
         pix_color = record.color * intensity;
 
-        pix_color += lookUpMap(GLOBAL_MAP, record.v, 100.0, record.n, 
-            record.idx) * Kp;
-        pix_color += lookUpMap(CAUSTICS_MAP, record.v, 100.0, record.n, 
-            record.idx) * Kc;
+        RGB g_color = lookUpMap(GLOBAL_MAP, record.v, 100.0, record.n, 
+            record.idx);
+        RGB c_color = lookUpMap(CAUSTICS_MAP, record.v, 100.0, record.n, 
+            record.idx);
 
-        pix_color += Is * Ks * specular;
+        pix_color = pix_color + g_color * Kp + Is * Ks * specular;
         color = pix_color;
 
-        if (depth == MAX_DEPTH) {
+        if (depth >= MAX_DEPTH) {
             color.scale();
             return color;
         }

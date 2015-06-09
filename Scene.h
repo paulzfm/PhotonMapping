@@ -27,7 +27,7 @@ public:
     // intersect?
     TraceRecord intersect(const Ray& ray);
 
-private:
+// private:
     std::vector<Shape*> _objects;
 };
 
