@@ -1,7 +1,49 @@
 #include "RayTracer.h"
 #include "util/common.h"
+#include "util/Parser.h"
+#include "util/shape/Plane.h"
+#include "util/shape/Sphere.h"
+#include "util/shape/Triangle.h"
+#include "util/shape/DSphere.h"
 
 #include <stdlib.h>
+
+void RayTracer::setup(const std::string& file)
+{
+    JsonBox::Object obj = Parser::loadAndCheck(file);
+    std::map<std::string, Material> materials;
+
+    for (const auto& pair : obj) {
+        if (pair.first == "materials") {
+            Parser::checkObject(pair.second, "materials");
+            for (const auto& m : pair.second.getObject()) {
+                materials[m.first] = Material::parse(m.second);
+            }
+        } else if (pair.first == "lights") {
+
+        } else if (pair.first == "camera") {
+            _camera = Camera::parse(pair.second);
+        } else if (pair.first == "objects") {
+            Parser::checkArray(pair.second, "objects");
+            std::shared_ptr<Shape> ptr;
+            for (const auto& o : pair.second.getObject()) {
+                if (o.first == "plane") {
+                    ptr = Plane::parse(o.second);
+                } else if (o.first == "sphere") {
+                    ptr = Sphere::parse(o.second);
+                }
+
+                ptr->setMaterial(materials[Parser::getMaterial(o.second, o.first)]);
+                _scene->addShape(ptr);
+            }
+        } else if (pair.first == "global") {
+            
+        } else {
+            std::cerr << "Parse error: unrecognized symbol \"" << pair.first << "\".\n";
+            exit(1);
+        }
+    }
+}
 
 void RayTracer::buildGlobalMap(int num_of_bounces)
 {
@@ -11,7 +53,7 @@ void RayTracer::buildGlobalMap(int num_of_bounces)
     while (num < NUM_GLOBAL_PHOTONS) {
         Ray ray = light.randomRay();
         Vector dir = ray.d;
-        TraceRecord record = _scene.intersect(ray); // trace this ray
+        TraceRecord record = _scene->intersect(ray); // trace this ray
         int bounces = 0;
 
         while (record.hit && bounces <= num_of_bounces) {
@@ -39,7 +81,7 @@ void RayTracer::buildGlobalMap(int num_of_bounces)
                 // refract from air into object
                 dir = refract(dir, record.n, record.obj->index_of_refraction, 
                     false);
-                record = _scene.intersect(Ray(record.v, dir));
+                record = _scene->intersect(Ray(record.v, dir));
                 if (!record.hit) {
                     break;
                 }
@@ -49,7 +91,7 @@ void RayTracer::buildGlobalMap(int num_of_bounces)
                     true);
             }
 
-            record = _scene.intersect(Ray(record.v, dir));
+            record = _scene->intersect(Ray(record.v, dir));
             bounces++;
         }
     }
@@ -72,7 +114,7 @@ void RayTracer::renderMap()
             Vector dir((float)i - (float)_width/2.0f, (float)j - (float)_height/2.0f, -200.0f);
             dir = (dir - eye).normalize();
             
-            TraceRecord record = _scene.intersect(Ray(eye, dir));
+            TraceRecord record = _scene->intersect(Ray(eye, dir));
             if (record.hit) {
                 RGB color = lookUpMap(CAUSTICS_MAP, record.v, 1.0, record.n);
                 if (!color.isBlack()) {
@@ -97,7 +139,7 @@ void RayTracer::render()
             dir = (dir - eye).normalize();
 
             // HitRecord output;
-            // if (_scene._objects[6]->hit(Ray(eye, dir), 0, 1000000, 0, output)) {
+            // if (_scene->_objects[6]->hit(Ray(eye, dir), 0, 1000000, 0, output)) {
 // std::cout << eye + output.t * dir << ", " << output.n << ", " << output.t << std::endl;
             // }
 
@@ -115,7 +157,7 @@ void RayTracer::distributionRender()
             dir = (dir - eye).normalize();
 
             // HitRecord output;
-            // if (_scene._objects[6]->hit(Ray(eye, dir), 0, 1000000, 0, output)) {
+            // if (_scene->_objects[6]->hit(Ray(eye, dir), 0, 1000000, 0, output)) {
 // std::cout << eye + output.t * dir << ", " << output.n << ", " << output.t << std::endl;
             // }
 
@@ -125,21 +167,21 @@ void RayTracer::distributionRender()
     }
 }
 
-void RayTracer::setCamera(Camera& camera)
+void RayTracer::setImgSize(int width, int height)
 {
-    // _camera(camera);
+    _img = std::unique_ptr<Image>(new Image(width, height));
+    _width = width;
+    _height = height;
 }
 
-void RayTracer::setImage(Image* img)
+void RayTracer::changeCamera(std::unique_ptr<Camera> camera)
 {
-    _img = img;
-    _width = img->width();
-    _height = img->height();
+    _camera = std::move(camera);
 }
 
 RGB RayTracer::pixelColor(const Ray& ray, int depth)
 {
-    TraceRecord record = _scene.intersect(ray);
+    TraceRecord record = _scene->intersect(ray);
     RGB color, reflect_color, refract_color, emit_color;
 
     if (depth >= MAX_DEPTH || !record.hit) {

@@ -167,7 +167,13 @@ void debug()
 
 int main(int argc, char** argv)
 {
-    
+    RayTracer tracer;
+    tracer.setup("scenes/balls.json");
+    tracer.setImgSize(800, 600);
+    printf("building...\n");
+    tracer.buildGlobalMap(3);
+    printf("rendering...\n");
+    tracer.render();
      
     return 0;
 }

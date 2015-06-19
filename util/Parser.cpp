@@ -41,32 +41,37 @@ void Parser::checkParam(JsonBox::Object& obj, const std::string& cls,
                 << "\" for " << cls << ":" << param << ", integer expected.\n";
             exit(1);
         }
+        break;
     case NUMBER:
-        if (!obj[param].isDouble()) {
+        if (!obj[param].isNumeric()) {
             std::cerr << "Parse error: invalid parameter \"" << obj[param].getString() 
                 << "\" for " << cls << ":" << param << ", number expected.\n";
             exit(1);
         }
+        break;
     case STRING:
         if (!obj[param].isString()) {
             std::cerr << "Parse error: invalid parameter \"" << obj[param].getString() 
                 << "\" for " << cls << ":" << param << ", string expected.\n";
             exit(1);
         }
+        break;
     case VEC3:
-        if (!obj[param].isArray() || !obj[param].getArray()[0].isDouble() ||
-            !obj[param].getArray()[1].isDouble() || !obj[param].getArray()[2].isDouble()) {
+        if (!obj[param].isArray() || !obj[param].getArray()[0].isNumeric() ||
+            !obj[param].getArray()[1].isNumeric() || !obj[param].getArray()[2].isNumeric()) {
             std::cerr << "Parse error: invalid parameter \"" << obj[param].getString() 
                 << "\" for " << cls << ":" << param << ", vec3 expected.\n";
             exit(1);
         }
+        break;
     case COLOR:
-        if (!obj[param].isArray() || !obj[param].getArray()[0].isDouble() ||
-            !obj[param].getArray()[1].isDouble() || !obj[param].getArray()[2].isDouble()) {
+        if (!obj[param].isArray() || !obj[param].getArray()[0].isNumeric() ||
+            !obj[param].getArray()[1].isNumeric() || !obj[param].getArray()[2].isNumeric()) {
             std::cerr << "Parse error: invalid parameter \"" << obj[param].getString() 
                 << "\" for " << cls << ":" << param << ", rgb expected.\n";
             exit(1);
         }
+        break;
     default:
         fprintf(stderr, "Parse error: invalid type code %d.\n", type);
         exit(1);
@@ -89,32 +94,37 @@ void Parser::checkOption(JsonBox::Object& obj, const std::string& cls,
                 << "\" for " << cls << ":" << param << ", integer expected.\n";
             exit(1);
         }
+        break;
     case NUMBER:
-        if (!obj[param].isDouble()) {
+        if (!obj[param].isNumeric()) {
             std::cerr << "Parse error: invalid parameter \"" << obj[param].getString() 
                 << "\" for " << cls << ":" << param << ", number expected.\n";
             exit(1);
         }
+        break;
     case STRING:
         if (!obj[param].isString()) {
             std::cerr << "Parse error: invalid parameter \"" << obj[param].getString() 
                 << "\" for " << cls << ":" << param << ", string expected.\n";
             exit(1);
         }
+        break;
     case VEC3:
-        if (!obj[param].isArray() || !obj[param].getArray()[0].isDouble() ||
-            !obj[param].getArray()[1].isDouble() || !obj[param].getArray()[2].isDouble()) {
+        if (!obj[param].isArray() || !obj[param].getArray()[0].isNumeric() ||
+            !obj[param].getArray()[1].isNumeric() || !obj[param].getArray()[2].isNumeric()) {
             std::cerr << "Parse error: invalid parameter \"" << obj[param].getString() 
                 << "\" for " << cls << ":" << param << ", vec3 expected.\n";
             exit(1);
         }
+        break;
     case COLOR:
-        if (!obj[param].isArray() || !obj[param].getArray()[0].isDouble() ||
-            !obj[param].getArray()[1].isDouble() || !obj[param].getArray()[2].isDouble()) {
+        if (!obj[param].isArray() || !obj[param].getArray()[0].isNumeric() ||
+            !obj[param].getArray()[1].isNumeric() || !obj[param].getArray()[2].isNumeric()) {
             std::cerr << "Parse error: invalid parameter \"" << obj[param].getString() 
                 << "\" for " << cls << ":" << param << ", rgb expected.\n";
             exit(1);
         }
+        break;
     default:
         fprintf(stderr, "Parse error: invalid type code %d.\n", type);
         exit(1);

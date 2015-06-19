@@ -29,32 +29,36 @@
 class RayTracer
 {
 public:
-    RayTracer(Scene& scene)
-        : _scene(scene), 
+    RayTracer()
+        : _scene(std::unique_ptr<Scene>(new Scene)),
           _global_map(NUM_GLOBAL_PHOTONS * 10),
           _caustics_map(NUM_CAUSTICS_PHOTONS * 10) {}
 
-    // call this first to build global map and caustics map
+    // setup scene & camera: call before runnning
+    void setup(const std::string& file);
+
+    // set output: call before runnning
+    void setImgSize(int width, int height);
+
+    // build global map and caustics map: call before rendering
     void buildGlobalMap(int num_of_bounces);
     void buildCausticsMap(int num_of_bounces);
     
-    // call this later(after building and setting) to render
+    // render
     void render();
     void distributionRender();
     void renderMap();
 
-    // setters
-    void setCamera(Camera& camera);
-    void setImage(Image* img);
+    // change a new camera
+    void changeCamera(std::unique_ptr<Camera> camera);
 
     PointLight light;
     Vector eye;
 
-// private:
-public:
-    Scene _scene;
-    Camera* _camera;
-    Image* _img;
+private:
+    std::unique_ptr<Scene> _scene;
+    std::unique_ptr<Camera> _camera;
+    std::unique_ptr<Image> _img;
 
     int _width, _height;
 

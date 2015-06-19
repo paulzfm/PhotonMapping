@@ -24,7 +24,7 @@ Ray Camera::rayAt(double x, double y) const
     return Ray(_origin, (_dir + _top * dy + _right * dx).normalize());
 }
 
-Camera Camera::parse(const JsonBox::Value& val)
+std::unique_ptr<Camera> Camera::parse(const JsonBox::Value& val)
 {
     Parser::checkObject(val, CLS);
     
@@ -36,12 +36,12 @@ Camera Camera::parse(const JsonBox::Value& val)
     Parser::checkParam(obj, CLS, "width", Parser::INTEGER);
     Parser::checkParam(obj, CLS, "height", Parser::INTEGER);
 
-    return Camera(
+    return std::unique_ptr<Camera>(new Camera(
         Parser::asVector(obj["origin"]),
         Parser::asVector(obj["direction"]),
         Parser::asVector(obj["top"]),
         Parser::asNumber(obj["fovy"]) * 2 * PI / 360.0,
         Parser::asInteger(obj["width"]),
         Parser::asInteger(obj["height"])
-    );
+    ));
 }

@@ -15,7 +15,7 @@ public:
     Ray rayAt(double x, double y) const;
 
     // parse json object
-    static Camera parse(const JsonBox::Value& val);
+    static std::unique_ptr<Camera> parse(const JsonBox::Value& val);
 
     const static std::string CLS;
 

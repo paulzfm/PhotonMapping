@@ -1,0 +1,97 @@
+{
+    "materials" :
+    {
+        "light" :	{"color" : [255, 255, 255],	"roughness" : 1.00,		"absorvance" : 1.00,	"emittance" : 1.0,	"index_of_refraction" : 1.492 },
+        "mirror" :  {"color" : [255, 255, 255],	"roughness" : 0.02,		"absorvance" : 0.02,	"emittance" : 0.0,	"index_of_refraction" : "infinity" },
+        "white_concrete" : {"color" : [255, 255, 255],	"roughness" : 1.00,		"absorvance" : 0.40,	"emittance" : 0.0,	"index_of_refraction" : "infinity" },
+        "red_concrete" :   {"color" : [255, 0, 0],		"roughness" : 1.00,		"absorvance" : 0.60,	"emittance" : 0.0,	"index_of_refraction" : "infinity" },
+        "green_concrete":  {"color" : [0, 255, 0],		"roughness" : 1.00,		"absorvance" : 0.60,	"emittance" : 0.0,	"index_of_refraction" : "infinity" },
+        "black_concrete":  {"color" : [200, 200, 200],	"roughness" : 1.00,		"absorvance" : 0.40,	"emittance" : 0.0,	"index_of_refraction" : "infinity" },
+    },
+    
+    "lights" :
+    [
+     	{
+        	"type" : "Quad",
+         	"material" : "light",
+         	"pointA" : [10, 39, 10],
+         	"pointB" : [-10, 39, 10],
+         	"pointC" : [10, 39, -10],
+         	"name" : "ceilingAreaLight"
+     	}
+    ],
+    
+    "objects" :
+    {
+        "sphere" :
+        {
+            "material" : "mirror",
+            "center" : [15.0, -30.0, 0.0],
+            "radius" : 7.0,
+        },
+        "sphere" :
+        {
+            "material" : "mirror",
+            "center" : [7.5, -30.0, 13],
+            "radius" : 7.0,
+            "name" : "sphere2"
+        },
+        "sphere" :
+        {
+            "material" : "mirror",
+            "center" : [-7.5, -30.0, 13],
+            "radius" : 7.0,
+            "name" : "sphere3"
+        },
+        "sphere" :
+        {
+            "material" : "mirror",
+            "center" : [-15.0, -30.0, 0.0],
+            "radius" : 7.0,
+            "name" : "sphere4"
+        },
+        "sphere" :
+        {
+            "material" : "mirror",
+            "center" : [-7.5, -30.0, -13.0],
+            "radius" : 7.0,
+            "name" : "sphere5"
+        },
+        "sphere" :
+        {
+            "material" : "mirror",
+            "center" : [7.5, -30.0, -13.0],
+            "radius" : 7.0,
+            "name" : "sphere6"
+        },
+        "plane" :
+        { "type" : "Plane", "material" : "white_concrete",	"point" : [0.0, -40.0, 0.0],	"normal" : [0.0, 1.0, 0.0],		"name" : "floorPlane" },
+        "plane" :	{ "type" : "Plane", "material" : "white_concrete",	"point" : [0.0, 40.0, 0.0],		"normal" : [0.0, -1.0, 0.0],	"name" : "ceilingPlane" },
+        "plane" :	{ "type" : "Plane", "material" : "red_concrete",	"point" : [-40.0, 0.0, 0.0],	"normal" : [1.0, 0.0, 0.0],		"name" : "leftPlane" },
+        "plane" :	{ "type" : "Plane", "material" : "green_concrete",	"point" : [40.0, 0.0, 0.0],		"normal" : [-1.0, 0.0, 0.0],	"name" : "rightPlane" },
+        "plane" :	{ "type" : "Plane", "material" : "white_concrete",	"point" : [0.0, 0.0, 40],		"normal" : [0.0, 0.0, -1.0],	"name" : "frontPlane" },
+        "plane" :	{ "type" : "Plane", "material" : "black_concrete",	"point" : [0.0, 0.0, -80],		"normal" : [0.0, 0.0, 1.0],		"name" : "backPlane" }
+    },
+    
+    "camera" :
+    {
+        "origin" : [0.0, 20.0, -60.0],
+        "direction" : [0, -0.342020143325, 0.9396926207859],
+        "top" : [0, 0.9396926207859, 0.342020143325],
+        "fovy" : 45.0,
+        "width" : 800,
+        "height" : 600,
+        "filename" : "../renders/out.ppm"
+    },
+    
+    "global" :
+    {
+        "MAX_PHOTONS" : 5000000,
+        "MAX_PHOTON_BOUNCE" : 10,
+        "MAX_RAY_BOUNCE" : 50,
+        "MAX_GATHER_DISTANCE" : 2.5,
+        "EXPOSURE" : 0.0035,
+        "EPS" : 1e-10,
+        "ANTIALIAS_THRESHOLD" : 0.5
+    }
+}

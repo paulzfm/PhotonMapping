@@ -23,16 +23,13 @@ struct TraceRecord
 class Scene
 {
 public:
-    // set up scene with json file
-    void setup(const std::string& file);
-
     // add shape to scene
-    // void addShape(Shape* shape);
+    void addShape(std::shared_ptr<Shape> shape);
 
     // intersect?
     TraceRecord intersect(const Ray& ray);
 
-// private:
+private:
     std::vector< std::shared_ptr<Shape> > _objects;
 };
 
