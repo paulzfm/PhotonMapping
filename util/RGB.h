@@ -10,12 +10,15 @@ public:
 	RGB(double red, double green, double blue, double alpha = 1.0)
 		: r(red), g(green), b(blue), a(alpha) {}
 	
+	bool isBlack();
+	
 	void scale();
 
 	// calculations
 	RGB operator + (const RGB& that) const;
 	RGB operator + (double t) const;
 	RGB operator * (double t) const;
+	RGB operator * (const RGB& that) const;
 	void operator += (const RGB& that);
 	void operator += (double t);
 	void operator *= (double t);

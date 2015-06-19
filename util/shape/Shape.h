@@ -5,7 +5,11 @@
 
 #include "../Ray.h"
 #include "../RGB.h"
+#include "../Parser.h"
+#include "../Material.h"
+
 #include <Math.h>
+#include <string>
 
 struct HitRecord
 {
@@ -17,6 +21,8 @@ struct HitRecord
 class Shape
 {
 public:
+    void setMaterial(const Material& m);
+
     virtual bool hit(const Ray& ray, double tmin, double tmax, 
         double time, HitRecord& record) const = 0;
     // virtual bool shadowHit(const Ray& ray, double tmin, double tmax, 
@@ -34,11 +40,11 @@ public:
     RGB color;
 
     double index_of_refraction; // index of refraction
-    double specular_power;  // specular power: (R.V)^n
-    RGB specular_factor; // specular factor in RGB-channels: Ks
-    RGB diffuse_factor;  // diffuse factor in RGB-channels: Kd
-
-    double reflective, refractive;
+    // double specular_power;  // specular power: (R.V)^n
+    double absorvance;
+    double roughness;
+    double reflectance;
+    double emittance;
 };
 
 #endif // SHAPE_H_

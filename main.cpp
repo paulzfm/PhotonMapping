@@ -4,6 +4,54 @@
 #include "util/shape/Sphere.h"
 #include "util/shape/Plane.h"
 
+/*
+void testCornell()
+{
+    // walls
+    Plane ceiling(Vector(0, -1, 0), 600);
+    ceiling.color = RGB(1, 1, 1);
+    Plane ground(Vector(0, 1, 0), 300);
+    ground.color = RGB(1, 1, 1);
+    Plane back(Vector(0, 0, 1), 700);
+    back.color = RGB(1, 1, 1);
+    Plane left(Vector(1, 0, 0), 400);
+    left.color = RGB(1, 0, 0);
+    Plane right(Vector(-1, 0, 0), 400);
+    right.color = RGB(0, 1, 0);
+
+    // sphere
+    Sphere sphere(Vector(200, -200, -400), 100);
+    sphere.color = RGB(1, 1, 1);
+
+    // add objects
+    Scene myScene;
+    myScene.addShape(&ceiling);
+    myScene.addShape(&ground);
+    myScene.addShape(&back);
+    myScene.addShape(&left);
+    myScene.addShape(&right);
+    myScene.addShape(&sphere);
+
+    // make a 640x480 image
+    Image img(640, 480);
+
+    // tracer
+    RayTracer tracer(myScene);
+    tracer.eye = Vector(0.0f,0.0f,0.0f);
+    tracer.light.pos = Vector(300.0f, 400.0f, -100.0f);
+
+    tracer.setImage(&img);
+    printf("building...\n");
+    tracer.buildGlobalMap(3);
+    // tracer.buildCausticsMap(3);
+    printf("rendering...\n");
+    tracer.render();
+    // tracer.renderMap();
+    printf("done\n");
+
+    img.WriteTga("cornell.tga", true);
+}
+
 void test()
 {
     // spheres
@@ -11,23 +59,23 @@ void test()
     RGB sphereColor1(1.0f,1.0f,1.0f,0.1f);
     Sphere sphere1(center1, 100.0f);
     sphere1.color = sphereColor1;
-    sphere1.reflective = 0.0;
+    sphere1.reflectance = 0.0;
 
     Vector center2(-200.0f, 100.0f, -500.0f);
-    RGB sphereColor2(1.0f,0.0f,0.0f,1.0f);
+    RGB sphereColor2(1.0f,0.0f,0.0f);
     Sphere sphere2(center2, 100.0f);
     sphere2.color = sphereColor2;
-    sphere2.reflective = 0.5;
+    sphere2.reflectance = 0.5;
     
     Vector center3(200.0f, 0.0f, -600.0f);
-    RGB sphereColor3(0.0f,0.0f,1.0f,1.0f);
+    RGB sphereColor3(0.0f,0.0f,1.0f);
     Sphere sphere3(center3, 100.0f);
     sphere3.color = sphereColor3;
-    sphere3.reflective = 0.5;
+    sphere3.reflectance = 0.5;
 
     // planes
     Vector planeNormal1(0.0, 1.0, 0.0);
-    RGB planeColor1(1.0,1.0,1.0,1.0);
+    RGB planeColor1(0,1,0);
     Plane plane1(planeNormal1, 300.0);
     plane1.color = planeColor1;
 
@@ -73,6 +121,7 @@ void test()
     tracer.setImage(&img);
     printf("building...\n");
     tracer.buildGlobalMap(3);
+    // tracer.buildCausticsMap(3);
     printf("rendering...\n");
     tracer.render();
     // tracer.renderMap();
@@ -114,14 +163,11 @@ void debug()
     std::cout << c2 << std::endl;
     std::cout << c3 << std::endl;
     std::cout << c4 << std::endl;
-}
+}*/
 
 int main(int argc, char** argv)
 {
-    srand(0);
-
-    test();
-    // debug();
+    
      
     return 0;
 }

@@ -1,5 +1,7 @@
 #include "Triangle.h"
 
+const std::string Triangle::CLS = "objects:triangle";
+
 bool Triangle::hit(const Ray& ray, double tmin, double tmax, 
     double time, HitRecord& record) const
 {
@@ -102,3 +104,18 @@ bool Triangle::shadowHit(const Ray& ray, double tmin, double tmax,
     return true;
 }
 
+Triangle Triangle::parse(const JsonBox::Value& val)
+{
+    Parser::checkObject(val, CLS);
+
+    JsonBox::Object obj = val.getObject();
+    Parser::checkParam(obj, CLS, "v1", Parser::VEC3);
+    Parser::checkParam(obj, CLS, "v2", Parser::VEC3);
+    Parser::checkParam(obj, CLS, "v3", Parser::VEC3);
+
+    return Triangle(
+        Parser::asVector(obj["v1"]),
+        Parser::asVector(obj["v2"]),
+        Parser::asVector(obj["v3"])
+    );
+}

@@ -1,6 +1,15 @@
 #include "Shape.h"
 #include "../common.h"
 
+void Shape::setMaterial(const Material& m)
+{
+    index_of_refraction = m.index_of_refraction;
+    absorvance = m.absorvance;
+    reflectance = m.reflectance;
+    emittance = m.emittance;
+    color = m.color;
+}
+
 /*
 Ray Shape::reflect(const Ray& incidence, HitRecord& record)
 {

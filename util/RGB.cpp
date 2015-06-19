@@ -1,6 +1,11 @@
 #include "RGB.h"
 #include "common.h"
 
+bool RGB::isBlack()
+{
+	return (r == 0.0 && g == 0.0 && b == 0.0);
+}
+
 void RGB::scale()
 {
 	double min = MIN(MIN(0.0, r), MIN(g, b));
@@ -27,6 +32,11 @@ RGB RGB::operator + (double t) const
 RGB RGB::operator * (double t) const
 {
 	return RGB(r * t, g * t, b * t, a);
+}
+
+RGB RGB::operator * (const RGB& that) const
+{
+	return RGB(r * that.r, g * that.g, b * that.b);
 }
 
 void RGB::operator += (const RGB& that)

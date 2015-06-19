@@ -1,5 +1,7 @@
 #include "Sphere.h"
 
+const std::string Sphere::CLS = "objects:sphere";
+
 bool Sphere::hit(const Ray& ray, double tmin, double tmax, 
     double time, HitRecord& record) const
 {
@@ -53,4 +55,18 @@ bool Sphere::shadowHit(const Ray& ray, double tmin, double tmax,
 
     // Hit!
     return true;
+}
+
+std::shared_ptr<Shape> Sphere::parse(const JsonBox::Value& val)
+{
+    Parser::checkObject(val, CLS);
+
+    JsonBox::Object obj = val.getObject();
+    Parser::checkParam(obj, CLS, "center", Parser::VEC3);
+    Parser::checkParam(obj, CLS, "radius", Parser::NUMBER);
+
+    return std::shared_ptr<Shape>(new Sphere(
+        Parser::asVector(obj["center"]), 
+        Parser::asNumber(obj["radius"])
+    ));
 }

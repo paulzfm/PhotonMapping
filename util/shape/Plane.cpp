@@ -1,5 +1,7 @@
 #include "Plane.h"
 
+const std::string Plane::CLS = "objects:plane";
+
 bool Plane::hit(const Ray& ray, double tmin, double tmax, 
     double time, HitRecord& record) const
 {
@@ -23,4 +25,18 @@ bool Plane::hit(const Ray& ray, double tmin, double tmax,
     }
 
     return false;
+}
+
+std::shared_ptr<Shape> Plane::parse(const JsonBox::Value& val)
+{
+    Parser::checkObject(val, CLS);
+
+    JsonBox::Object obj = val.getObject();
+    Parser::checkParam(obj, CLS, "normal", Parser::VEC3);
+    Parser::checkParam(obj, CLS, "distance", Parser::NUMBER);
+
+    return std::shared_ptr<Plane>(new Plane(
+        Parser::asVector(obj["normal"]), 
+        Parser::asNumber(obj["distance"])
+    ));
 }

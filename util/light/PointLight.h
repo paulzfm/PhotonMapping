@@ -7,6 +7,7 @@ class PointLight : public Light
 {
 public:
     Ray randomRay() const;
+    Ray randomRay2() const;
 
     Vector pos;
 };

@@ -6,14 +6,18 @@
 class Plane : public Shape
 {
 public:
-    Plane(const Vector& normal, double d)
-        : n(normal), d(d) { reflective = 0.0; }
+    Plane(const Vector& normal, double distance)
+        : n(normal), d(distance) { reflectance = 0.0; }
+
+    static std::shared_ptr<Shape> parse(const JsonBox::Value& val);
 
     bool hit(const Ray& ray, double tmin, double tmax, 
         double time, HitRecord& record) const;
 
     Vector n;
     double d;
+
+    const static std::string CLS;
 };
 
 #endif

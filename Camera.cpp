@@ -1,22 +1,47 @@
 #include "Camera.h"
 
-Camera::Camera(Vector& center, Vector& gaze, Vector& up, 
-    double aperture, double distance,
-    double left, double right, double bottom, double top)
-    : center(center), d(distance), 
-      u0(left), u1(right), v0(bottom), v1(top)
+#include <math.h>
+
+const std::string Camera::CLS = "camera";
+
+Camera::Camera(const Vector& origin, const Vector& direction, const Vector& top, 
+    double fovy, int width, int height)
+    : _origin(origin), _dir(direction), _width(width), _height(height)
 {
-    r = aperture / 2.0;
-    uvw.fromWV(-gaze, up);
-    corner = center + u0 * uvw.u + v0 * uvw.v - d * uvw.w;
-    across = (u0 - u1) * uvw.u;
-    up = (v0 - v1) * uvw.v;
+    _aspect = (double)width / height;
+    _half_height = height / 2.0;
+    _half_width = width / 2.0;
+
+    _top = top * tan(fovy);
+    _right = _dir.cross(top) * tan(fovy) * (-_aspect);
 }
 
-Ray Camera::rayAt(double a, double b, double x1, double x2) const
+Ray Camera::rayAt(double x, double y) const
 {
-    Vector origin = center + 2.0 * (x1 - 0.5) * r * uvw.u + 
-        2.0 * (x2 - 0.5) * r * uvw.v;
-    Vector target = corner + across * a + up * b;
-    return Ray(origin, (target - origin).normalize());
+    double dx = (x + 0.5 - _half_width) / _half_width;
+    double dy = (-y + 0.5 + _half_height) / _half_height;
+
+    return Ray(_origin, (_dir + _top * dy + _right * dx).normalize());
+}
+
+Camera Camera::parse(const JsonBox::Value& val)
+{
+    Parser::checkObject(val, CLS);
+    
+    JsonBox::Object obj = val.getObject();
+    Parser::checkParam(obj, CLS, "origin", Parser::VEC3);
+    Parser::checkParam(obj, CLS, "direction", Parser::VEC3);
+    Parser::checkParam(obj, CLS, "top", Parser::VEC3);
+    Parser::checkParam(obj, CLS, "fovy", Parser::NUMBER);
+    Parser::checkParam(obj, CLS, "width", Parser::INTEGER);
+    Parser::checkParam(obj, CLS, "height", Parser::INTEGER);
+
+    return Camera(
+        Parser::asVector(obj["origin"]),
+        Parser::asVector(obj["direction"]),
+        Parser::asVector(obj["top"]),
+        Parser::asNumber(obj["fovy"]) * 2 * PI / 360.0,
+        Parser::asInteger(obj["width"]),
+        Parser::asInteger(obj["height"])
+    );
 }

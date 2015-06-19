@@ -3,6 +3,8 @@
 
 #include "util/Ray.h"
 #include "util/shape/Shape.h"
+
+#include <string>
 #include <vector>
 
 struct TraceRecord
@@ -11,7 +13,7 @@ struct TraceRecord
     double t; // parameter t
     Vector n; // normal vector
     Vector v; // hitting point
-    Shape* obj; // object
+    std::shared_ptr<Shape> obj; // object
     int idx;  // object index
     RGB color;
 
@@ -21,14 +23,17 @@ struct TraceRecord
 class Scene
 {
 public:
+    // set up scene with json file
+    void setup(const std::string& file);
+
     // add shape to scene
-    void addShape(Shape* shape);
+    // void addShape(Shape* shape);
 
     // intersect?
     TraceRecord intersect(const Ray& ray);
 
 // private:
-    std::vector<Shape*> _objects;
+    std::vector< std::shared_ptr<Shape> > _objects;
 };
 
 #endif // SCENE_H_

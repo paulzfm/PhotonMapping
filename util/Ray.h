@@ -7,8 +7,8 @@ class Ray
 {
 public:
     Ray() {}
-    Ray(const Vector& origin, const Vector& direction) : 
-        o(origin), d(direction) {}
+    Ray(const Vector& origin, const Vector& direction, bool air = false) : 
+        o(origin), d(direction), air(air) {}
     Ray(const Ray& r) { *this = r; }
 
     friend std::ostream& operator << (std::ostream& os, const Ray& r);
