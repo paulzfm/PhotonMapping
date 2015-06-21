@@ -5,8 +5,9 @@
 const std::string Camera::CLS = "camera";
 
 Camera::Camera(const Vector& origin, const Vector& direction, const Vector& top, 
-    double fovy, int width, int height)
-    : _origin(origin), _dir(direction), _width(width), _height(height)
+    double fovy, int width, int height, const std::string& output)
+    : _origin(origin), _dir(direction), 
+      width(width), height(height), output(output)
 {
     _aspect = (double)width / height;
     _half_height = height / 2.0;
@@ -35,6 +36,7 @@ std::unique_ptr<Camera> Camera::parse(const JsonBox::Value& val)
     Parser::checkParam(obj, CLS, "fovy", Parser::NUMBER);
     Parser::checkParam(obj, CLS, "width", Parser::INTEGER);
     Parser::checkParam(obj, CLS, "height", Parser::INTEGER);
+    Parser::checkParam(obj, CLS, "output", Parser::STRING);
 
     return std::unique_ptr<Camera>(new Camera(
         Parser::asVector(obj["origin"]),
@@ -42,6 +44,7 @@ std::unique_ptr<Camera> Camera::parse(const JsonBox::Value& val)
         Parser::asVector(obj["top"]),
         Parser::asNumber(obj["fovy"]) * 2 * PI / 360.0,
         Parser::asInteger(obj["width"]),
-        Parser::asInteger(obj["height"])
+        Parser::asInteger(obj["height"]),
+        Parser::asString(obj["output"])
     ));
 }

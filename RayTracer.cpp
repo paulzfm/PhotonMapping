@@ -10,13 +10,6 @@
 
 #include <stdlib.h>
 
-void RayTracer::setImgSize(int width, int height)
-{
-    _img = std::unique_ptr<Image>(new Image(width, height));
-    _width = width;
-    _height = height;
-}
-
 void RayTracer::changeCamera(std::unique_ptr<Camera> camera)
 {
     _camera = std::move(camera);
@@ -70,16 +63,40 @@ void RayTracer::setup(const std::string& file)
                 _scene->objects.push_back(ptr);
             }
         } else if (pair.first == "global") {
-            Parser::checkObject(pair.second, "global");
-            for (const auto& s : pair.second.getObject()) {
-                if (s.first == "num_global_photons") {
-                    // NUM_GLOBAL_PHOTONS = num_global_photons;
-                }
-            }
+            parseParams(pair.second);
         } else {
             std::cerr << "Parse error: unrecognized symbol \"" << pair.first << "\".\n";
             exit(1);
         }
+    }
+}
+
+void RayTracer::parseParams(const JsonBox::Value& val)
+{
+    std::string CLS = "global";
+    Parser::checkObject(val, CLS);
+    
+    JsonBox::Object obj = val.getObject();
+    Parser::checkOption(obj, CLS, "num_global_photons", Parser::INTEGER, "10000");
+    Parser::checkOption(obj, CLS, "max_photon_bounce", Parser::INTEGER, "10");
+    Parser::checkOption(obj, CLS, "max_tracing_depth", Parser::INTEGER, "10");
+    Parser::checkOption(obj, CLS, "gathering_radius", Parser::NUMBER, "2.0");
+    Parser::checkOption(obj, CLS, "exposure", Parser::NUMBER, "[0, 0, 0]");
+
+    if (obj.find("num_global_photons") != obj.end()) {
+        _num_global_photons = Parser::asInteger(obj["num_global_photons"]);
+    }
+    if (obj.find("max_photon_bounce") != obj.end()) {
+        _max_photon_bounce = Parser::asInteger(obj["max_photon_bounce"]);
+    }
+    if (obj.find("max_tracing_depth") != obj.end()) {
+        _max_tracing_depth = Parser::asInteger(obj["max_tracing_depth"]);
+    }
+    if (obj.find("gathering_radius") != obj.end()) {
+        _gathering_radius = Parser::asNumber(obj["gathering_radius"]);
+    }
+    if (obj.find("exposure") != obj.end()) {
+        _exposure = Parser::asNumber(obj["exposure"]);
     }
 }
 
@@ -191,6 +208,8 @@ void RayTracer::renderMap()
 
 void RayTracer::render()
 {
+    _img = std::unique_ptr<Image>(new Image(_camera->width, _camera->height));
+
     for (int i = 0; i < _width; i++) {
     std::cout << "\r                                \r"; /* 30 spaces to cleanup the line and assure cursor is on last_char_pos + 1 */
         std::cout << "Rendering (progress: " << (i + 1) * 100.0 / _width << "%)";

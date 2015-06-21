@@ -22,9 +22,6 @@ public:
     // setup scene & camera: call before runnning
     void setup(const std::string& file);
 
-    // set output: call before runnning
-    void setImgSize(int width, int height);
-
     // build global map and caustics map: call before rendering
     void buildGlobalMap();
     void buildCausticsMap();
@@ -55,6 +52,9 @@ private:
     int _max_tracing_depth;
     double _gathering_radius;
     double _exposure;
+
+    // parse parameters
+    void parseParams(const JsonBox::Value& val);
 
     // compute pixel's color
     RGB pixelColor(const Ray& ray, int depth);
