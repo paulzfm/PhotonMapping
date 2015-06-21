@@ -70,6 +70,8 @@ void RayTracer::setup(const std::string& file)
             exit(1);
         }
     }
+
+    _env = std::unique_ptr<Material>(new Material(0, 0, 0, 1, RGB(1, 1, 1)));
 }
 
 void RayTracer::parseParams(const JsonBox::Value& val)

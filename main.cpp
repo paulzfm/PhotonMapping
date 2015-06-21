@@ -173,6 +173,7 @@ int main(int argc, char** argv)
     tracer.buildGlobalMap();
     printf("rendering...\n");
     tracer.render();
+    printf("\nDone.\n");
      
     return 0;
 }
