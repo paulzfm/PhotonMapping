@@ -36,10 +36,14 @@ public:
 	friend std::ostream& operator << (std::ostream& os, const Vector &v);
 
 	double operator [] (int index) const;
+
+	Vector noise(double delta) const;
 	
 	static double distance(const Vector& v1, const Vector& v2);
-	static double cos(const Vector& v1, const Vector& v2); // cos <v1, v2>
-	static Vector zero();  // v = (0, 0, 0)
+	static double angleCos(const Vector& v1, const Vector& v2); // cos <v1, v2>
+
+	const static Vector TOP;
+	const static Vector RIGHT;
 	
 	double x;
 	double y;

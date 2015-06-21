@@ -104,7 +104,7 @@ bool Triangle::shadowHit(const Ray& ray, double tmin, double tmax,
     return true;
 }
 
-Triangle Triangle::parse(const JsonBox::Value& val)
+std::shared_ptr<Shape> Triangle::parse(const JsonBox::Value& val)
 {
     Parser::checkObject(val, CLS);
 
@@ -113,9 +113,9 @@ Triangle Triangle::parse(const JsonBox::Value& val)
     Parser::checkParam(obj, CLS, "v2", Parser::VEC3);
     Parser::checkParam(obj, CLS, "v3", Parser::VEC3);
 
-    return Triangle(
+    return std::shared_ptr<Shape>(new Triangle(
         Parser::asVector(obj["v1"]),
         Parser::asVector(obj["v2"]),
         Parser::asVector(obj["v3"])
-    );
+    ));
 }

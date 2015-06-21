@@ -5,7 +5,7 @@
 #include "Camera.h"
 #include "util/Image.h"
 #include "util/Map.h"
-#include "util/light/PointLight.h"
+#include "util/Material.h"
 
 #include <vector>
 
@@ -13,26 +13,11 @@
 #define CAUSTICS_MAP 1
 #define BOTH_MAPS 2
 
-#define NUM_GLOBAL_PHOTONS 10000
-#define NUM_CAUSTICS_PHOTONS 10000
-#define MAX_DEPTH 3
-#define Ia 1.0 //ambient
-#define Ka 0.2 //ambient
-#define Id 1.0 //diffuse
-#define Kd 0.5 //diffuse
-#define Is 1.0 //specular
-#define Ks 0.4 //specular
-#define specular_power 7.0 //specular
-#define Kp 0.2 //Contribution from PhotonMapping
-#define Kc 0.2
-
 class RayTracer
 {
 public:
     RayTracer()
-        : _scene(std::unique_ptr<Scene>(new Scene)),
-          _global_map(NUM_GLOBAL_PHOTONS * 10),
-          _caustics_map(NUM_CAUSTICS_PHOTONS * 10) {}
+        : _scene(std::unique_ptr<Scene>(new Scene)) {}
 
     // setup scene & camera: call before runnning
     void setup(const std::string& file);
@@ -41,8 +26,8 @@ public:
     void setImgSize(int width, int height);
 
     // build global map and caustics map: call before rendering
-    void buildGlobalMap(int num_of_bounces);
-    void buildCausticsMap(int num_of_bounces);
+    void buildGlobalMap();
+    void buildCausticsMap();
     
     // render
     void render();
@@ -52,21 +37,30 @@ public:
     // change a new camera
     void changeCamera(std::unique_ptr<Camera> camera);
 
-    PointLight light;
-    Vector eye;
-
 private:
     std::unique_ptr<Scene> _scene;
     std::unique_ptr<Camera> _camera;
     std::unique_ptr<Image> _img;
-
-    int _width, _height;
+    std::unique_ptr<Material> _env;
 
     // maps
-    Map _global_map, _caustics_map;
+    std::unique_ptr<Map> _global_map, _caustics_map;
+
+    // image size
+    int _width, _height;
+
+    // parameters
+    int _num_global_photons;
+    int _max_photon_bounce;
+    int _max_tracing_depth;
+    double _gathering_radius;
+    double _exposure;
 
     // compute pixel's color
     RGB pixelColor(const Ray& ray, int depth);
+
+    // photon bouncing
+    void globalBounce(const Ray& ray, RGB& power);
 
     // store photon
     void storePhoton(int type, const RGB& power, const Vector& pos, const Vector& dir);
@@ -76,9 +70,10 @@ private:
         const Vector& normal);
 
     // helper functions
+    double reflectance(const Vector &dir, const Vector &normal, double from, double to);
     Vector reflect(const Vector& incidence, const Vector& normal);
     Vector refract(const Vector& incidence, const Vector& normal, 
-        double index_of_refraction, bool air);
+        double from, double to);
     Vector diffuse(const Vector& normal, double roughness);
 };
 

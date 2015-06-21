@@ -1,7 +1,7 @@
 // Base class of Shape
 
-#ifndef SHAPE_H_
-#define SHAPE_H_
+#ifndef UTIL_SHAPE_H_
+#define UTIL_SHAPE_H_
 
 #include "../Ray.h"
 #include "../RGB.h"
@@ -43,8 +43,7 @@ public:
     // double specular_power;  // specular power: (R.V)^n
     double absorvance;
     double roughness;
-    double reflectance;
     double emittance;
 };
 
-#endif // SHAPE_H_
+#endif // UTIL_SHAPE_H_

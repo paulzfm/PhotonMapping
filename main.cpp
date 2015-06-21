@@ -171,7 +171,7 @@ int main(int argc, char** argv)
     tracer.setup("scenes/balls.json");
     tracer.setImgSize(800, 600);
     printf("building...\n");
-    tracer.buildGlobalMap(3);
+    tracer.buildGlobalMap();
     printf("rendering...\n");
     tracer.render();
      

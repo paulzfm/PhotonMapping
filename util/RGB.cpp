@@ -19,6 +19,13 @@ void RGB::scale()
 	(*this) *= 1.0 / max;
 }
 
+void RGB::min(const RGB& that)
+{
+	r = MIN(r, that.r);
+	g = MIN(g, that.g);
+	b = MIN(b, that.b);
+}
+
 RGB RGB::operator + (const RGB& that) const
 {
 	return RGB(r + that.r, g + that.g, b + that.b, MIN(a, that.a));

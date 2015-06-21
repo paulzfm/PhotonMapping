@@ -12,7 +12,6 @@ Material Material::parse(const JsonBox::Value& val)
     Parser::checkOption(obj, CLS, "index_of_refraction", Parser::NUMBER, "DEFAULT_IND");
     Parser::checkOption(obj, CLS, "absorvance", Parser::NUMBER, "DEFAULT_ABS");
     Parser::checkOption(obj, CLS, "roughness", Parser::NUMBER, "DEFAULT_ROU");
-    Parser::checkOption(obj, CLS, "reflectance", Parser::NUMBER, "DEFAULT_REF");
     Parser::checkOption(obj, CLS, "emittance", Parser::NUMBER, "DEFAULT_EMI");
     Parser::checkOption(obj, CLS, "color", Parser::COLOR, "[0, 0, 0]");
 
@@ -24,9 +23,6 @@ Material Material::parse(const JsonBox::Value& val)
     }
     if (obj.find("roughness") != obj.end()) {
         m.roughness = Parser::asNumber(obj["roughness"]);
-    }
-    if (obj.find("reflectance") != obj.end()) {
-        m.reflectance = Parser::asNumber(obj["reflectance"]);
     }
     if (obj.find("emittance") != obj.end()) {
         m.emittance = Parser::asNumber(obj["emittance"]);

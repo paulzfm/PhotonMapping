@@ -13,6 +13,7 @@ public:
 	bool isBlack();
 	
 	void scale();
+	void min(const RGB& that);
 
 	// calculations
 	RGB operator + (const RGB& that) const;

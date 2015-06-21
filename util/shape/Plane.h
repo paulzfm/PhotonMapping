@@ -7,7 +7,7 @@ class Plane : public Shape
 {
 public:
     Plane(const Vector& normal, double distance)
-        : n(normal), d(distance) { reflectance = 0.0; }
+        : n(normal), d(distance) {}
 
     static std::shared_ptr<Shape> parse(const JsonBox::Value& val);
 

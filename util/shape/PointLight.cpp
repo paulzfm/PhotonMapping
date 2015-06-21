@@ -21,3 +21,8 @@ Ray PointLight::randomRay2() const
 
     return Ray(pos, Vector(x, y, z));
 }
+
+std::shared_ptr<Light> PointLight::parse(const JsonBox::Value& val)
+{
+    return nullptr;
+}

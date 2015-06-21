@@ -10,12 +10,12 @@ TraceRecord Scene::intersect(const Ray& ray)
     double tmin = -999999.9;
     double tmax = 999999.9;
 
-    for (int i = 0; i < _objects.size(); i++) {
+    for (int i = 0; i < objects.size(); i++) {
         HitRecord record;
-        if (_objects[i]->hit(ray, tmin, tmax, 0, record)) {
+        if (objects[i]->hit(ray, tmin, tmax, 0, record)) {
             if (record.t <= tmax) {
                 res.idx = i;
-                res.obj = _objects[i];
+                res.obj = objects[i];
                 res.t = record.t;
                 res.v = ray.o + record.t * ray.d;
                 res.n = record.n;
@@ -31,5 +31,10 @@ TraceRecord Scene::intersect(const Ray& ray)
 
 void Scene::addShape(std::shared_ptr<Shape> shape)
 {
-    _objects.push_back(shape);
+    objects.push_back(shape);
+}
+
+void Scene::addLight(std::shared_ptr<Light> light)
+{
+    lights.push_back(light);
 }

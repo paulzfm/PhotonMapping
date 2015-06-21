@@ -7,15 +7,15 @@ class Ray
 {
 public:
     Ray() {}
-    Ray(const Vector& origin, const Vector& direction, bool air = false) : 
-        o(origin), d(direction), air(air) {}
+    Ray(const Vector& origin, const Vector& direction, bool inside = false) : 
+        o(origin), d(direction), inside(inside) {}
     Ray(const Ray& r) { *this = r; }
 
     friend std::ostream& operator << (std::ostream& os, const Ray& r);
 
     Vector o; // origin
     Vector d; // direction
-    bool air;
+    bool inside;
 
     Vector vectorAt(double t) const { return o + t * d; }  // v = o + td
 };

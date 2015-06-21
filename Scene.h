@@ -3,6 +3,7 @@
 
 #include "util/Ray.h"
 #include "util/shape/Shape.h"
+#include "util/shape/Light.h"
 
 #include <string>
 #include <vector>
@@ -26,11 +27,14 @@ public:
     // add shape to scene
     void addShape(std::shared_ptr<Shape> shape);
 
+    // add light to scene
+    void addLight(std::shared_ptr<Light> light);
+
     // intersect?
     TraceRecord intersect(const Ray& ray);
 
-private:
-    std::vector< std::shared_ptr<Shape> > _objects;
+    std::vector< std::shared_ptr<Shape> > objects;
+    std::vector< std::shared_ptr<Light> > lights;
 };
 
 #endif // SCENE_H_

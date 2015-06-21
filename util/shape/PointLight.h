@@ -9,6 +9,8 @@ public:
     Ray randomRay() const;
     Ray randomRay2() const;
 
+    static std::shared_ptr<Light> parse(const JsonBox::Value& val);
+
     Vector pos;
 };
 

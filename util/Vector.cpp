@@ -1,6 +1,11 @@
 #include "Vector.h"
 #include "common.h"
+
 #include <math.h>
+
+// This defines the location of x, y and z axis.
+const Vector Vector::TOP = Vector(0, 1, 0);
+const Vector Vector::RIGHT = Vector(1, 0, 0);
 
 Vector::Vector(double x, double y, double z)
 {
@@ -150,19 +155,30 @@ double Vector::operator [] (int index) const
 	return 0;
 }
 
+Vector Vector::noise(double delta) const
+{
+    double radius = drand48() * length() * delta;
+    double theta = drand48() * PI * 2;
+
+	double a = radius * cos(theta);
+	double b = radius * sin(theta); 
+
+	Vector u = cross(TOP);
+	if (u.square() != 1)
+		u = this->cross(RIGHT);
+
+	Vector v = cross(u);
+
+	return (*this * (length() - radius) + u * a + v * b).normalize();
+}
+
 double Vector::distance(const Vector& v1, const Vector& v2)
 {
 	return sqrt( (v1.x - v2.x) * (v1.x - v2.x) + (v1.y - v2.y) * (v1.y - v2.y)
 		+ (v1.z - v2.z) * (v1.z - v2.z) );
 }
 
-
-double Vector::cos(const Vector& v1, const Vector& v2)
+double Vector::angleCos(const Vector& v1, const Vector& v2)
 {
 	return v1.dot(v2) / (v1.length() * v2.length());
-}
-
-Vector Vector::zero()
-{
-	return Vector(0, 0, 0);
 }
