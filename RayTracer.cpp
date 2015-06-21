@@ -64,6 +64,7 @@ void RayTracer::setup(const std::string& file)
             }
         } else if (pair.first == "global") {
             parseParams(pair.second);
+            _global_map = std::unique_ptr<Map>(new Map(_num_global_photons * 10));
         } else {
             std::cerr << "Parse error: unrecognized symbol \"" << pair.first << "\".\n";
             exit(1);
@@ -113,6 +114,8 @@ void RayTracer::buildGlobalMap()
             globalBounce(light->randomRay(), light->color);
         }
     }
+
+    printf("%d global photon emitted.\n", _global_map->size());
 }
 
 void RayTracer::globalBounce(const Ray& ray, RGB& power)
@@ -208,14 +211,16 @@ void RayTracer::renderMap()
 
 void RayTracer::render()
 {
-    _img = std::unique_ptr<Image>(new Image(_camera->width, _camera->height));
+    int width = _camera->width;
+    int height = _camera->height;
+    _img = std::unique_ptr<Image>(new Image(width, height));
 
-    for (int i = 0; i < _width; i++) {
+    for (int i = 0; i < width; i++) {
     std::cout << "\r                                \r"; /* 30 spaces to cleanup the line and assure cursor is on last_char_pos + 1 */
-        std::cout << "Rendering (progress: " << (i + 1) * 100.0 / _width << "%)";
+        std::cout << "Rendering (progress: " << (i + 1) * 100.0 / width << "%)";
         std::cout.flush();
 
-        for (int j = 0; j < _height; j++) {
+        for (int j = 0; j < height; j++) {
             _img->set(i, j, pixelColor(_camera->rayAt(i, j), 0));
         }
     }
