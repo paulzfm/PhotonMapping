@@ -33,6 +33,8 @@ public:
     // intersect?
     TraceRecord intersect(const Ray& ray);
 
+    void print();
+
     std::vector< std::shared_ptr<Shape> > objects;
     std::vector< std::shared_ptr<Light> > lights;
 };

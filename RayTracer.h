@@ -4,7 +4,7 @@
 #include "Scene.h"
 #include "Camera.h"
 #include "util/Image.h"
-#include "util/Map.h"
+#include "util/KDT.h"
 #include "util/Material.h"
 
 #include <vector>
@@ -30,18 +30,18 @@ public:
     void render();
     void distributionRender();
     void renderMap();
+    void renderMap2();
 
-    // change a new camera
-    void changeCamera(std::unique_ptr<Camera> camera);
-
-private:
+// private:
     std::unique_ptr<Scene> _scene;
-    std::unique_ptr<Camera> _camera;
     std::unique_ptr<Image> _img;
     std::unique_ptr<Material> _env;
 
+    // cameras
+    std::vector< std::unique_ptr<Camera> > _cameras;
+
     // maps
-    std::unique_ptr<Map> _global_map, _caustics_map;
+    std::unique_ptr<KDT> _global_map, _caustics_map;
 
     // image size
     int _width, _height;
@@ -57,13 +57,13 @@ private:
     void parseParams(const JsonBox::Value& val);
 
     // compute pixel's color
-    RGB pixelColor(const Ray& ray, int depth);
+    RGB pixelColor(const Ray& ray, int depth, double relevance);
 
     // photon bouncing
-    void globalBounce(const Ray& ray, RGB& power);
+    void globalBounce(Photon& photon, int bounces);
 
     // store photon
-    void storePhoton(int type, const RGB& power, const Vector& pos, const Vector& dir);
+    void storePhoton(int type, const Photon& photon);
 
     // look up photon map
     RGB lookUpMap(int type, const Vector& center, double radius, 

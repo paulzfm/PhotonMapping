@@ -9,69 +9,148 @@
 #include "util/shape/Quad.h"
 
 #include <stdlib.h>
-
-void RayTracer::changeCamera(std::unique_ptr<Camera> camera)
-{
-    _camera = std::move(camera);
-}
+#include <omp.h>
 
 void RayTracer::setup(const std::string& file)
 {
     JsonBox::Object obj = Parser::loadAndCheck(file);
     std::map<std::string, Material> materials;
 
-    for (const auto& pair : obj) {
-        if (pair.first == "materials") {
-            Parser::checkObject(pair.second, "materials");
-            for (const auto& m : pair.second.getObject()) {
-                materials[m.first] = Material::parse(m.second);
-            }
-        } else if (pair.first == "lights") {
-            Parser::checkObject(pair.second, "lights");
-            for (const auto& l : pair.second.getObject()) {
-                std::shared_ptr<Light> ptr;
-                if (l.first == "point") {
-                    ptr = PointLight::parse(l.second);
-                } else if (l.first == "quad") {
-                    ptr = Quad::parse(l.second);
-                } else {
-                    std::cerr << "Parse error: unrecognized light type \"" << l.first << "\".\n";
-                    exit(1);
-                }
-                ptr->setMaterial(materials[Parser::getMaterial(l.second, l.first)]);
-                _scene->lights.push_back(ptr);
-            }
-        } else if (pair.first == "camera") {
-            _camera = Camera::parse(pair.second);
-        } else if (pair.first == "objects") {
-            Parser::checkObject(pair.second, "objects");
-            for (const auto& o : pair.second.getObject()) {
-                std::shared_ptr<Shape> ptr;
-                if (o.first == "plane") {
-                    ptr = Plane::parse(o.second);
-                } else if (o.first == "sphere") {
-                    ptr = Sphere::parse(o.second);
-                } else if (o.first == "triangle") {
-                    ptr = Triangle::parse(o.second);
-                } else if (o.first == "box") {
+    // 1. materials
+    if (obj.find("materials") == obj.end()) {
+        std::cerr << "Parse error: missing section \"materials\".\n";
+        exit(1);
+    } else {
+        Parser::checkArray(obj["materials"], "materials");
+        int i = 0;
+        for (const auto& v : obj["materials"].getArray()) {
+            char cls[16];
+            sprintf(cls, "materials[%d]", i++);
 
-                } else {
-                    std::cerr << "Parse error: unrecognized object type \"" << o.first << "\".\n";
-                    exit(1);
-                }
-                ptr->setMaterial(materials[Parser::getMaterial(o.second, o.first)]);
-                _scene->objects.push_back(ptr);
-            }
-        } else if (pair.first == "global") {
-            parseParams(pair.second);
-            _global_map = std::unique_ptr<Map>(new Map(_num_global_photons * 10));
-        } else {
-            std::cerr << "Parse error: unrecognized symbol \"" << pair.first << "\".\n";
-            exit(1);
+            Parser::checkObject(v, cls);
+            JsonBox::Object m = v.getObject();
+            Parser::checkParam(m, cls, "name", Parser::STRING);
+            materials[Parser::asString(m["name"])] = Material::parse(m);
         }
     }
 
+    // 2. lights
+    if (obj.find("lights") == obj.end()) {
+        std::cerr << "Parse error: missing section \"lights\".\n";
+        exit(1);
+    } else {
+        Parser::checkArray(obj["lights"], "lights");
+        int i = 0;
+        for (const auto& v : obj["lights"].getArray()) {
+            char cls[16];
+            sprintf(cls, "lights[%d]", i++);
+
+            Parser::checkObject(v, cls);
+            JsonBox::Object l = v.getObject();
+            Parser::checkParam(l, cls, "type", Parser::STRING);
+            std::string type = Parser::asString(l["type"]);
+
+            std::shared_ptr<Light> ptr;
+            if (type == "point") {
+                ptr = PointLight::parse(l);
+            } else if (type == "quad") {
+                ptr = Quad::parse(l);
+            } else {
+                std::cerr << "Parse error: unrecognized light type \"" << type << "\".\n";
+                exit(1);
+            }
+            std::string material_name = Parser::getMaterial(l, cls);
+            if (materials.find(material_name) == materials.end()) {
+                std::cerr << "Parse error: no such material \"" << material_name << "\".\n";
+                exit(1);
+            }
+            ptr->setMaterial(materials[material_name]);
+            _scene->lights.push_back(ptr);
+            _scene->objects.push_back((std::shared_ptr<Shape>)ptr);
+        }
+    }
+
+    // 3. cameras
+    if (obj.find("cameras") == obj.end()) {
+        std::cerr << "Parse error: missing section \"cameras\".\n";
+        exit(1);
+    } else {
+        Parser::checkArray(obj["cameras"], "cameras");
+        int i = 0;
+        for (const auto& v : obj["cameras"].getArray()) {
+            char cls[16];
+            sprintf(cls, "cameras[%d]", i++);
+
+            Parser::checkObject(v, cls);
+            JsonBox::Object c = v.getObject();
+
+            _cameras.push_back(Camera::parse(c));
+        }
+    }
+
+    // 4. objects
+    if (obj.find("objects") == obj.end()) {
+        std::cerr << "Parse error: missing section \"objects\".\n";
+        exit(1);
+    } else {
+        Parser::checkArray(obj["objects"], "objects");
+        int i = 0;
+        for (const auto& v : obj["objects"].getArray()) {
+            char cls[16];
+            sprintf(cls, "objects[%d]", i++);
+
+            Parser::checkObject(v, cls);
+            JsonBox::Object o = v.getObject();
+            Parser::checkParam(o, cls, "type", Parser::STRING);
+            std::string type = Parser::asString(o["type"]);
+
+            std::shared_ptr<Shape> ptr;
+            if (type == "plane") {
+                ptr = Plane::parse(o);
+            } else if (type == "sphere") {
+                ptr = Sphere::parse(o);
+            } else if (type == "triangle") {
+                ptr = Triangle::parse(o);
+            } else if (type == "box") {
+
+            } else {
+                std::cerr << "Parse error: unrecognized object type \"" << type << "\".\n";
+                exit(1);
+            }
+            std::string material_name = Parser::getMaterial(o, cls);
+            if (materials.find(material_name) == materials.end()) {
+                std::cerr << "Parse error: no such material \"" << material_name << "\".\n";
+                exit(1);
+            }
+            ptr->setMaterial(materials[material_name]);
+            _scene->objects.push_back(ptr);
+        }
+    }
+
+    // 5. global [optional]
+    if (obj.find("global") == obj.end()) {
+        std::cerr << "Parse warning: missing section \"global\": loading default value.\n";
+    } else {
+        parseParams(obj["global"]);
+    }
+
+    // initialize
+    _global_map = std::unique_ptr<KDT>(new KDT);
     _env = std::unique_ptr<Material>(new Material(0, 0, 0, 1, RGB(1, 1, 1)));
+
+    // summary
+    printf("Settings:\n");
+    printf("\tnum global photons: %d\n", _num_global_photons);
+    printf("\tmax photon bounce: %d\n", _max_photon_bounce);
+    printf("\tmax tracing depth: %d\n", _max_tracing_depth);
+    printf("\tgathering radius: %lf\n", _gathering_radius);
+    printf("\texposure: %lf\n", _exposure);
+
+    printf("\tmaterials: %lu\n", materials.size());
+    printf("\tlights: %lu\n", _scene->lights.size());
+    printf("\tobjects: %lu\n", _scene->objects.size());
+
+    _scene->print();
 }
 
 void RayTracer::parseParams(const JsonBox::Value& val)
@@ -113,73 +192,75 @@ void RayTracer::buildGlobalMap()
     for (const auto& light : _scene->lights) {
         int n = light->area() * light->emittance * _num_global_photons / sum;
         for (int i = 0; i < n; ++i) {
-            globalBounce(light->randomRay(), light->color);
+            Photon photon = light->randomPhoton();
+            globalBounce(photon, 0);
         }
     }
 
+    _global_map->balance();
     printf("%d global photon emitted.\n", _global_map->size());
 }
 
-void RayTracer::globalBounce(const Ray& ray, RGB& power)
+void RayTracer::globalBounce(Photon& photon, int bounces)
 {
-    Vector dir = ray.d;
-    bool inside = ray.inside; // inside object?
-    TraceRecord record = _scene->intersect(ray); // trace this ray
-    int bounces = 0;
-
-    while (record.hit) {
-        if (inside) {
-            record.n = -record.n;
-        }
-
-        double absorvance = record.obj->absorvance;
-        double roughness = record.obj->roughness;
-        double reflectance;
-        if (inside) {
-            reflectance = this->reflectance(dir, record.n, 
-                record.obj->index_of_refraction, _env->index_of_refraction);
-        } else {
-            reflectance = this->reflectance(dir, record.n,
-                _env->index_of_refraction, record.obj->index_of_refraction);
-        }
-        reflectance *= (1 - absorvance);
-        double refractance = (1 - absorvance) * (1 - reflectance);
-
-        power.min(record.color);
-        storePhoton(GLOBAL_MAP, power, record.v, dir);
-
-        double random = drand48(); // russian roulette
-        if (random < absorvance) { // absorb
-            break;
-        }
-
-        if (random < absorvance + reflectance) { // reflect
-            if ((random - absorvance) / reflectance < roughness) { // diffuse reflect
-                dir = diffuse(record.n, roughness);
-            } else { // specular reflect
-                dir = reflect(dir, record.n);
-            }
-        } else { // refract
-            if (inside) {
-                dir = refract(dir, record.n, record.obj->index_of_refraction, 
-                    _env->index_of_refraction);
-            } else {
-                dir = refract(dir, record.n, _env->index_of_refraction, 
-                    record.obj->index_of_refraction);
-            }
-
-            // reverse
-            inside = !inside;
-        }
-
-        bounces++;
-        if (bounces >= _max_photon_bounce) { // reach maximun bounce: stop
-            break;
-        }
-
-        // else: continue bouncing
-        record = _scene->intersect(Ray(record.v, dir, inside));
+    if (bounces >= _max_photon_bounce || photon.power.isBlack()) {
+        return;
     }
+
+    TraceRecord record = _scene->intersect(photon.ray);
+
+    if (!record.hit) {
+        return;
+    }
+
+    if (photon.ray.inside) {
+        record.n = -record.n;
+    }
+    photon.ray.o = record.v;
+
+    double absorvance = record.obj->absorvance;
+    double roughness = record.obj->roughness;
+    double reflectance;
+    if (photon.ray.inside) {
+        reflectance = this->reflectance(photon.ray.d, record.n, 
+            record.obj->index_of_refraction, _env->index_of_refraction);
+    } else {
+        reflectance = this->reflectance(photon.ray.d, record.n,
+            _env->index_of_refraction, record.obj->index_of_refraction);
+    }
+    reflectance *= (1 - absorvance);
+    double refractance = (1 - absorvance) * (1 - reflectance);
+
+    double random = drand48(); // russian roulette
+    if (random < absorvance) { // absorb
+        return;
+    }
+
+    if (random < absorvance + reflectance) { // reflect
+        photon.power.min(record.color);
+
+        if ((random - absorvance) / reflectance < roughness) { // diffuse reflect
+            photon.ray.d = record.n;
+            storePhoton(GLOBAL_MAP, photon);
+            photon.ray.d = diffuse(record.n, roughness);
+        } else { // specular reflect
+            photon.ray.d = reflect(photon.ray.d, record.n);
+        }
+    } else { // refract
+        if (photon.ray.inside) {
+            photon.ray.d = refract(photon.ray.d, record.n, record.obj->index_of_refraction, 
+                _env->index_of_refraction);
+        } else {
+            photon.ray.d = refract(photon.ray.d, record.n, _env->index_of_refraction, 
+                record.obj->index_of_refraction);
+        }
+
+        // reverse
+        photon.ray.inside = !photon.ray.inside;
+    }
+
+    // continue
+    globalBounce(photon, bounces + 1);
 }
 
 void RayTracer::buildCausticsMap()
@@ -189,71 +270,111 @@ void RayTracer::buildCausticsMap()
 
 void RayTracer::renderMap()
 {
-// for (int i = 0; i < _width; i++) {
-//     for (int j = 0; j < _height; j++) {
-//         Vector dir((float)i - (float)_width/2.0f, (float)j - (float)_height/2.0f, -200.0f);
-//         dir = (dir - eye).normalize();
+    int width = _cameras[0]->width;
+    int height = _cameras[0]->height;
+    _img = std::unique_ptr<Image>(new Image(width, height));
 
-//         TraceRecord record = _scene->intersect(Ray(eye, dir));
-//         if (record.hit) {
-//             RGB color = lookUpMap(CAUSTICS_MAP, record.v, 1.0, record.n);
-//             if (!color.isBlack()) {
-//                 _img->set(i, j, RGB(1.0, 1.0, 0.0));
-//                 continue;
-//             }
-//             color = lookUpMap(GLOBAL_MAP, record.v, 2.0, record.n);
-//             std::cout << color << std::endl;
-//             if (!color.isBlack()) {
-//                 _img->set(i, j, RGB(1.0, 1.0, 1.0));
-//             }
-//         }
-//     }
-// }
+    int cnt = 0;
+
+        #pragma omp parallel for
+        for (int i = 0; i < width * height; i++) {
+            Ray ray = _cameras[0]->rayAt(i % width, i / width);
+            TraceRecord record = _scene->intersect(ray);
+            if (ray.inside) {
+                record.n = -record.n;
+            }
+            if (record.hit) {
+                RGB color = lookUpMap(GLOBAL_MAP, record.v, _gathering_radius, record.n);
+                _img->set(i, color);
+            }
+
+            if (!(i % width)) {
+                #pragma omp critical
+                {
+                    std::cout << "\r                                \r";  //30 spaces to cleanup the line and assure cursor is on last_char_pos + 1 
+                    std::cout << "Rendering (progress: " << (cnt += width) * 100.0 / (width * height) << "%)";
+                    std::cout.flush();
+                }
+            }
+        }
+        
+
+        std::cout << std::endl;
+        _img->dumpPPM("test.ppm");
+}
+
+void RayTracer::renderMap2()
+{
+    int width = _cameras[0]->width;
+    int height = _cameras[0]->height;
+    _img = std::unique_ptr<Image>(new Image(width, height));
+
+    int cnt = 0;
+
+        #pragma omp parallel for
+        for (int i = 0; i < width * height; i++) {
+            Ray ray = _cameras[0]->rayAt(i % width, i / width);
+            TraceRecord record = _scene->intersect(ray);
+            if (ray.inside) {
+                record.n = -record.n;
+            }
+            if (record.hit) {
+                RGB color = record.color;
+                _img->set(i, color);
+            }
+
+            if (!(i % width)) {
+                #pragma omp critical
+                {
+                    std::cout << "\r                                \r";  //30 spaces to cleanup the line and assure cursor is on last_char_pos + 1 
+                    std::cout << "Rendering (progress: " << (cnt += width) * 100.0 / (width * height) << "%)";
+                    std::cout.flush();
+                }
+            }
+        }
+        
+
+        std::cout << std::endl;
+        _img->dumpPPM("test.ppm");
 }
 
 void RayTracer::render()
 {
-    int width = _camera->width;
-    int height = _camera->height;
-    _img = std::unique_ptr<Image>(new Image(width, height));
+    for (const auto& c : _cameras) {
+        int width = c->width;
+        int height = c->height;
+        Image img(width, height);
 
-    for (int i = 0; i < width; i++) {
-    std::cout << "\r                                \r"; /* 30 spaces to cleanup the line and assure cursor is on last_char_pos + 1 */
-        std::cout << "Rendering (progress: " << (i + 1) * 100.0 / width << "%)";
-        std::cout.flush();
+        int cnt = 0;
 
-        for (int j = 0; j < height; j++) {
-            _img->set(i, j, pixelColor(_camera->rayAt(i, j), 0));
+        #pragma omp parallel for
+        for (int i = 0; i < width * height; i++) {
+            img.set(i, pixelColor(c->rayAt(i % width, i / width), 1, 1.0));
+
+            if (!(i % width)) {
+                #pragma omp critical
+                {
+                    std::cout << "\r                                \r"; /* 30 spaces to cleanup the line and assure cursor is on last_char_pos + 1 */
+                    std::cout << "Rendering (progress: " << (cnt += width) * 100.0 / (width * height) << "%)";
+                    std::cout.flush();
+                }
+            }
         }
-    }
+        std::cout << std::endl;
 
-    // std::cout << "Output to file " << output << ".\n";
-    _img->WriteTga("test.tga", true);
+        img.dumpPPM("test.ppm");
+    }
 }
 
 void RayTracer::distributionRender()
 {
-    for (int i = 0; i < _width; i++) {
-        for (int j = 0; j < _height; j++) {
-        // Vector dir((float)i - (float)_width/2.0f, (float)j - (float)_height/2.0f, -200.0f);
-        // dir = (dir - eye).normalize();
-
-        // HitRecord output;
-        // if (_scene->_objects[6]->hit(Ray(eye, dir), 0, 1000000, 0, output)) {
-// std::cout << eye + output.t * dir << ", " << output.n << ", " << output.t << std::endl;
-        // }
-
-
-        // _img->set(i, j, pixelColor(Ray(eye, dir), 0));
-        }
-    }
 }
 
-RGB RayTracer::pixelColor(const Ray& ray, int depth)
+RGB RayTracer::pixelColor(const Ray& ray, int depth, double relevance)
 {
     TraceRecord record = _scene->intersect(ray);
 
-    if (depth >= _max_tracing_depth || !record.hit) {
+    if (depth >= _max_tracing_depth || relevance < 1e-10 || !record.hit) {
         return RGB(); // black
     }
 
@@ -279,8 +400,12 @@ RGB RayTracer::pixelColor(const Ray& ray, int depth)
     RGB color, reflect_color, refract_color, emit_color;
 
     if (reflectance > 0) { // reflect
-        reflect_color = (1 - roughness) * pixelColor(Ray(record.v, reflect(ray.d, record.n)), depth + 1)
-        + roughness * lookUpMap(GLOBAL_MAP, record.v, 100, record.n);
+        reflect_color = roughness * lookUpMap(GLOBAL_MAP, record.v, _gathering_radius, record.n) 
+            * _exposure // diffuse
+            + (1 - roughness)
+            * pixelColor(Ray(record.v, reflect(ray.d, record.n)), depth + 1, 
+                relevance * reflectance * (1 - roughness)) // specular
+        ;
     }
 
     if (refractance > 0) { // refract
@@ -291,8 +416,8 @@ RGB RayTracer::pixelColor(const Ray& ray, int depth)
                     refract(ray.d, record.n, record.obj->index_of_refraction, 
                         _env->index_of_refraction),
                     false
-                ), depth + 1
-            ) * record.obj->color * refractance;
+                ), depth + 1, relevance * refractance
+            ) * record.obj->color;
         } else {  // refract from air into object
             refract_color = pixelColor(
                 Ray(
@@ -300,32 +425,31 @@ RGB RayTracer::pixelColor(const Ray& ray, int depth)
                     refract(ray.d, record.n, _env->index_of_refraction, 
                         record.obj->index_of_refraction),
                     true
-                ), depth + 1
-            ) * RGB(1, 1, 1) * refractance;
+                ), depth + 1, relevance * refractance
+            ) * RGB(1, 1, 1);
         }
     }
 
     if (emittance > 0) { // emit
-        emit_color = emittance * record.obj->color;
+        emit_color = record.obj->color;
     }
 
-// std::cout << reflect_color << ", " << diffuse_color << ", " << refract_color << std::endl;
-
-    color = emit_color + reflect_color + refract_color;
+    color = emittance * emit_color + reflectance * reflect_color + refractance * refract_color;
     color.scale();
+
     return color;
 }
 
-void RayTracer::storePhoton(int type, const RGB& power, const Vector& pos, const Vector& dir)
+void RayTracer::storePhoton(int type, const Photon& photon)
 {
     switch (type) {
-        case GLOBAL_MAP:
-        _global_map->store(power, pos, dir);
+    case GLOBAL_MAP:
+        _global_map->store(photon);
         break;
-        case CAUSTICS_MAP:
-        _caustics_map->store(power, pos, dir);
+    case CAUSTICS_MAP:
+        _caustics_map->store(photon);
         break;
-        default:
+    default:
         fprintf(stderr, "Invalid map type: %d\n", type);
         exit(1);
     }
@@ -378,11 +502,14 @@ Vector RayTracer::reflect(const Vector& incidence, const Vector& normal)
 Vector RayTracer::refract(const Vector& incidence, const Vector& normal, 
     double from, double to)
 {
-    double a = from / to;
-    double cos1 = normal.dot(incidence) * normal.dot(incidence);
-    double cos2 = sqrt(a * cos1 - a + 1.0);
-    return (incidence * a + normal * (normal.dot(incidence) * a - cos2))
-        .normalize();
+    double n = from / to;
+    double cos1 = -(normal.dot(incidence));
+    double sine = n * n * (1.0 - cos1 * cos1);
+
+    assert(sine <= 1.0);
+
+    double cos2 = sqrt(1.0 - sine);
+    return (incidence * n + normal * (n * cos1 - cos2)).normalize();
 }
 
 Vector RayTracer::diffuse(const Vector& normal, double roughness)
