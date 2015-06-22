@@ -22,36 +22,43 @@ Ray Quad::randomRay() const
     );
 }
 
-bool Quad::hit(const Ray& ray, double tmin, double tmax, 
-    double time, HitRecord& record) const
+Photon Quad::randomPhoton() const
+{
+    double alpha = drand48();
+    double beta = drand48();
+
+    Photon photon;
+    photon.ray.o = A + _u * alpha + _v * beta;
+    photon.ray.d = _n.noise(roughness);
+    photon.power = color;
+
+    return photon;
+}
+
+bool Quad::hit(const Ray& ray, double time, HitRecord& record) const
 {
     double a = _n.dot(ray.d);
-    if (a == 0) /* Ray and Plane are parallel -> no intersection or Line intersection FIXME */
+    if (a == 0) {
         return false;
+    }
 
     double b = _n.dot(A - ray.o);
-    if (a * b < 0) /* point is behind the ray's origin */
+    if (a * b < EPS) {
         return false;
+    }
 
-    /* 
-        o is the vector from A to P
-        point P is inside only if the projections of o onto u (and v) are between 0 and |u| (and |v| respectivly)
-        
-        0 <= |o|*cos(theta) <= |u|
-        0 <= |o|* (o . u)/(|o|*|u|) <= |u|
-        0 <= (o . u) / |u| <= |u|
-        0 <= o. u <= |u|^2  
-    */
     Vector o = ray.o + ray.d * (b / a) - A;
     double dot = _u.dot(o);
-    if (dot < 0 || dot > _u.square())
+    if (dot < 0 || dot > _u.square()) {
         return false;
+    }
 
     dot = _v.dot(o);
-    if (dot < 0 || dot > _v.square())
+    if (dot < 0 || dot > _v.square()) {
         return false;
+    }
 
-
+    // Hit! Let's record it.
     record.t = b / a;
     record.n = _n;
     record.color = color;

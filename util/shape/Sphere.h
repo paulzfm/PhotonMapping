@@ -12,8 +12,7 @@ public:
 
     static std::shared_ptr<Shape> parse(const JsonBox::Value& val);
 
-    bool hit(const Ray& ray, double tmin, double tmax, 
-        double time, HitRecord& record) const;
+    bool hit(const Ray& ray, double time, HitRecord& record) const;
     bool shadowHit(const Ray& ray, double tmin, double tmax, 
         double time) const;
 

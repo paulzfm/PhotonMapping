@@ -49,6 +49,13 @@ void Parser::checkParam(JsonBox::Object& obj, const std::string& cls,
             exit(1);
         }
         break;
+    case NUMBER_OR_INF:
+        if (!obj[param].isNumeric() && obj[param].getString() != "infinity") {
+            std::cerr << "Parse error: invalid parameter \"" << obj[param].getString() 
+                << "\" for " << cls << ":" << param << ", number expected.\n";
+            exit(1);
+        }
+        break;
     case STRING:
         if (!obj[param].isString()) {
             std::cerr << "Parse error: invalid parameter \"" << obj[param].getString() 
@@ -102,6 +109,13 @@ void Parser::checkOption(JsonBox::Object& obj, const std::string& cls,
             exit(1);
         }
         break;
+    case NUMBER_OR_INF:
+        if (!obj[param].isNumeric() && obj[param].getString() != "infinity") {
+            std::cerr << "Parse error: invalid parameter \"" << obj[param].getString() 
+                << "\" for " << cls << ":" << param << ", number expected.\n";
+            exit(1);
+        }
+        break;
     case STRING:
         if (!obj[param].isString()) {
             std::cerr << "Parse error: invalid parameter \"" << obj[param].getString() 
@@ -144,6 +158,11 @@ double Parser::asNumber(const JsonBox::Value& val)
 std::string Parser::asString(const JsonBox::Value& val)
 {
     return val.getString();
+}
+
+double Parser::asNumberOrInf(const JsonBox::Value& val)
+{
+    return val.isNumeric() ? val.getDouble() : std::numeric_limits<double>::infinity();
 }
 
 Vector Parser::asVector(const JsonBox::Value& val)

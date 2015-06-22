@@ -2,8 +2,7 @@
 
 const std::string Triangle::CLS = "objects:triangle";
 
-bool Triangle::hit(const Ray& ray, double tmin, double tmax, 
-    double time, HitRecord& record) const
+bool Triangle::hit(const Ray& ray, double time, HitRecord& record) const
 {
     double t;
     double A = v1.x - v2.x;
@@ -42,10 +41,6 @@ bool Triangle::hit(const Ray& ray, double tmin, double tmax,
     }
 
     t = -(F * AKJB + E * JCAL + D * BLKC) / alpha;
-
-    if (t < tmin || t > tmax) {
-        return false;
-    }
 
     // Hit! Let's record it.
     record.t = t;

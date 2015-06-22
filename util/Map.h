@@ -19,6 +19,8 @@ public:
 
     RGB irradianceEstimate(const Vector& pos, double radius, const Vector& normal);
 
+    int size();
+
     void print();
 
 private:

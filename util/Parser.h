@@ -26,6 +26,7 @@ public:
     // data translators
     static int asInteger(const JsonBox::Value& val);
     static double asNumber(const JsonBox::Value& val);
+    static double asNumberOrInf(const JsonBox::Value& val);
     static std::string asString(const JsonBox::Value& val);
     static Vector asVector(const JsonBox::Value& val);
     static RGB asRGB(const JsonBox::Value& val);
@@ -38,6 +39,7 @@ public:
     const static int STRING = 2;
     const static int VEC3 = 3;
     const static int COLOR = 4;
+    const static int NUMBER_OR_INF = 5;
 };
 
 #endif // UTIL_PARSER_H_

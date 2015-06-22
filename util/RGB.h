@@ -6,9 +6,8 @@
 class RGB
 {
 public:
-	RGB() : r(0.0), g(0.0), b(0.0), a(1.0) {}
-	RGB(double red, double green, double blue, double alpha = 1.0)
-		: r(red), g(green), b(blue), a(alpha) {}
+	RGB(double red = 0, double green = 0, double blue = 0)
+		: r(red), g(green), b(blue) {}
 	
 	bool isBlack();
 	
@@ -34,10 +33,9 @@ public:
 
 	static RGB filter(const RGB& in, const RGB& ft);
 
-	double r;
-	double g;
-	double b;
-	double a;
+	double r; // red
+	double g; // green
+	double b; // blue
 };
 
 #endif // RGB_H_

@@ -6,6 +6,7 @@ void Shape::setMaterial(const Material& m)
     index_of_refraction = m.index_of_refraction;
     absorvance = m.absorvance;
     emittance = m.emittance;
+    roughness = m.roughness;
     color = m.color;
 }
 

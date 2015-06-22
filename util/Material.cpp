@@ -9,14 +9,14 @@ Material Material::parse(const JsonBox::Value& val)
     Parser::checkObject(val, CLS);
     
     JsonBox::Object obj = val.getObject();
-    Parser::checkOption(obj, CLS, "index_of_refraction", Parser::NUMBER, "DEFAULT_IND");
-    Parser::checkOption(obj, CLS, "absorvance", Parser::NUMBER, "DEFAULT_ABS");
-    Parser::checkOption(obj, CLS, "roughness", Parser::NUMBER, "DEFAULT_ROU");
-    Parser::checkOption(obj, CLS, "emittance", Parser::NUMBER, "DEFAULT_EMI");
-    Parser::checkOption(obj, CLS, "color", Parser::COLOR, "[0, 0, 0]");
+    Parser::checkOption(obj, CLS, "index_of_refraction", Parser::NUMBER_OR_INF, "1");
+    Parser::checkOption(obj, CLS, "absorvance", Parser::NUMBER, "0");
+    Parser::checkOption(obj, CLS, "roughness", Parser::NUMBER, "0");
+    Parser::checkOption(obj, CLS, "emittance", Parser::NUMBER, "0");
+    Parser::checkOption(obj, CLS, "color", Parser::COLOR, "[1, 1, 1]");
 
     if (obj.find("index_of_refraction") != obj.end()) {
-        m.index_of_refraction = Parser::asNumber(obj["index_of_refraction"]);
+        m.index_of_refraction = Parser::asNumberOrInf(obj["index_of_refraction"]);
     }
     if (obj.find("absorvance") != obj.end()) {
         m.absorvance = Parser::asNumber(obj["absorvance"]);

@@ -21,10 +21,11 @@ public:
 
     static std::shared_ptr<Light> parse(const JsonBox::Value& val);
 
-    bool hit(const Ray& ray, double tmin, double tmax, 
-        double time, HitRecord& record) const;
+    bool hit(const Ray& ray, double time, HitRecord& record) const;
 
     Ray randomRay() const;
+
+    Photon randomPhoton() const;
 
     double area() const;
 

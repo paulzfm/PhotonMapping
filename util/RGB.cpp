@@ -3,20 +3,14 @@
 
 bool RGB::isBlack()
 {
-	return (r == 0.0 && g == 0.0 && b == 0.0);
+	return (r == 0 && g == 0 && b == 0);
 }
 
 void RGB::scale()
 {
-	double min = MIN(MIN(0.0, r), MIN(g, b));
-	double max = 1.0;
-	if (min < 0) {
-		(*this) += -min;
-		max -= min;
-	}
-
-	max = MAX(MAX(max, r), MAX(g, b));
-	(*this) *= 1.0 / max;
+	r = MIN(r, 1.0);
+	g = MIN(g, 1.0);
+	b = MIN(b, 1.0);
 }
 
 void RGB::min(const RGB& that)
@@ -28,17 +22,17 @@ void RGB::min(const RGB& that)
 
 RGB RGB::operator + (const RGB& that) const
 {
-	return RGB(r + that.r, g + that.g, b + that.b, MIN(a, that.a));
+	return RGB(r + that.r, g + that.g, b + that.b);
 }
 
 RGB RGB::operator + (double t) const
 {
-	return RGB(r + t, g + t, b + t, a);
+	return RGB(r + t, g + t, b + t);
 }
 
 RGB RGB::operator * (double t) const
 {
-	return RGB(r * t, g * t, b * t, a);
+	return RGB(r * t, g * t, b * t);
 }
 
 RGB RGB::operator * (const RGB& that) const
@@ -51,7 +45,6 @@ void RGB::operator += (const RGB& that)
 	r += that.r;
 	g += that.g;
 	b += that.b;
-	a = MIN(a, that.a);
 }
 
 void RGB::operator += (double t)
@@ -81,7 +74,7 @@ bool operator != (const RGB& v1, const RGB& v2)
 
 RGB operator * (double t, const RGB& v)
 {
-	return RGB(t * v.r, t * v.g, t * v.b, v.a);
+	return RGB(t * v.r, t * v.g, t * v.b);
 }
 
 std::istream& operator >> (std::istream& is, RGB& v)
@@ -98,7 +91,7 @@ std::istream& operator >> (std::istream& is, RGB& v)
 
 std::ostream& operator << (std::ostream& os, const RGB &v)
 {
-	os << "(" << v.r << ", " << v.g << ", " << v.b << ", " << v.a << ")";
+	os << "(" << v.r << ", " << v.g << ", " << v.b << ")";
 	return os;
 }
 

@@ -26,7 +26,7 @@ double Vector::square() const
 
 Vector Vector::normalize() const
 {
-	double inv = 1 / length();
+	double inv = 1.0 / length();
 	return Vector(inv * x, inv * y, inv * z);
 }
 
@@ -165,7 +165,7 @@ Vector Vector::noise(double delta) const
 
 	Vector u = cross(TOP);
 	if (u.square() != 1)
-		u = this->cross(RIGHT);
+		u = cross(RIGHT);
 
 	Vector v = cross(u);
 

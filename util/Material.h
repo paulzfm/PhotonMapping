@@ -4,17 +4,15 @@
 #include "RGB.h"
 #include "Parser.h"
 
-#define DEFAULT_IND 0.4
-#define DEFAULT_ABS 0.4
-#define DEFAULT_ROU 0.4
-#define DEFAULT_EMI 0.4
-
 class Material
 {
 public:
-    Material() :
-        index_of_refraction(DEFAULT_IND), absorvance(DEFAULT_ABS),
-        roughness(DEFAULT_ROU), emittance(DEFAULT_EMI) {}
+    Material(double absorvance = 0, double roughness = 0, double emittance = 0, 
+        double index_of_refraction = 1, const RGB& color = RGB())
+        : index_of_refraction(index_of_refraction),
+          absorvance(absorvance),
+          roughness(roughness),
+          emittance(emittance) {}
 
     RGB color;
 

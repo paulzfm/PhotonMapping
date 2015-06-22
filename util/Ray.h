@@ -6,7 +6,7 @@
 class Ray
 {
 public:
-    Ray() {}
+    Ray() { inside = false; }
     Ray(const Vector& origin, const Vector& direction, bool inside = false) : 
         o(origin), d(direction), inside(inside) {}
     Ray(const Ray& r) { *this = r; }

@@ -8,14 +8,12 @@
 
 int main(int argc, char** argv)
 {
-    // debug();exit(1);
-
     RayTracer tracer;
     tracer.setup("scenes/balls.json");
     printf("building...\n");
     tracer.buildGlobalMap();
     printf("rendering...\n");
-    tracer.renderMap();
+    tracer.render();
     printf("\nDone.\n");
      
     return 0;

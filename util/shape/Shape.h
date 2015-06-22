@@ -3,6 +3,7 @@
 #ifndef UTIL_SHAPE_H_
 #define UTIL_SHAPE_H_
 
+#include "../common.h"
 #include "../Ray.h"
 #include "../RGB.h"
 #include "../Parser.h"
@@ -23,8 +24,7 @@ class Shape
 public:
     void setMaterial(const Material& m);
 
-    virtual bool hit(const Ray& ray, double tmin, double tmax, 
-        double time, HitRecord& record) const = 0;
+    virtual bool hit(const Ray& ray, double time, HitRecord& record) const = 0;
     // virtual bool shadowHit(const Ray& ray, double tmin, double tmax, 
         // double time) const = 0;
 

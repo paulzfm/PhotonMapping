@@ -502,14 +502,11 @@ Vector RayTracer::reflect(const Vector& incidence, const Vector& normal)
 Vector RayTracer::refract(const Vector& incidence, const Vector& normal, 
     double from, double to)
 {
-    double n = from / to;
-    double cos1 = -(normal.dot(incidence));
-    double sine = n * n * (1.0 - cos1 * cos1);
-
-    assert(sine <= 1.0);
-
-    double cos2 = sqrt(1.0 - sine);
-    return (incidence * n + normal * (n * cos1 - cos2)).normalize();
+    double a = from / to;
+    double cos1 = normal.dot(incidence) * normal.dot(incidence);
+    double cos2 = sqrt(a * cos1 - a + 1.0);
+    return (incidence * a + normal * (normal.dot(incidence) * a - cos2))
+        .normalize();
 }
 
 Vector RayTracer::diffuse(const Vector& normal, double roughness)

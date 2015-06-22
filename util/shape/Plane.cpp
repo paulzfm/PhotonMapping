@@ -2,29 +2,23 @@
 
 const std::string Plane::CLS = "objects:plane";
 
-bool Plane::hit(const Ray& ray, double tmin, double tmax, 
-    double time, HitRecord& record) const
+bool Plane::hit(const Ray& ray, double time, HitRecord& record) const
 {
-    double denom = n.dot(ray.d);
-    if (denom != 0) {
-        double t = -(n.dot(ray.o) + d) / denom;
-        if (t < 0) {
-            return false;
-        }
-
-        // In valid interval?
-        if (t < tmin || t > tmax) {
-            return false;
-        }
-
-        // Hit! Let's record it.
-        record.t = t;
-        record.n = n;
-        record.color = color;
-        return true;
+    double a = n.dot(ray.d);
+    if (a == 0) {
+        return false;
     }
 
-    return false;
+    double b = n.dot(p - ray.o);
+    if (a * b < EPS) {
+        return false;
+    }
+
+    // Hit! Let's record it.
+    record.t = b / a;
+    record.n = n;
+    record.color = color;
+    return true;
 }
 
 std::shared_ptr<Shape> Plane::parse(const JsonBox::Value& val)
@@ -33,10 +27,10 @@ std::shared_ptr<Shape> Plane::parse(const JsonBox::Value& val)
 
     JsonBox::Object obj = val.getObject();
     Parser::checkParam(obj, CLS, "normal", Parser::VEC3);
-    Parser::checkParam(obj, CLS, "distance", Parser::NUMBER);
+    Parser::checkParam(obj, CLS, "point", Parser::VEC3);
 
     return std::shared_ptr<Plane>(new Plane(
         Parser::asVector(obj["normal"]), 
-        Parser::asNumber(obj["distance"])
+        Parser::asVector(obj["point"])
     ));
 }

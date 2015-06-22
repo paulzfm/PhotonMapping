@@ -1,8 +1,8 @@
 #ifndef COMMON_H_
 #define COMMON_H_
 
-const static double PI = 3.14159;
-const static double EPS = 1 >> 20;
+const static double PI = 3.1415926535;
+const static double EPS = 1e-10;
 
 #ifndef MAX
 #define MAX(x, y) (x > y ? (x) : (y))
