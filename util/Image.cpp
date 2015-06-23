@@ -12,6 +12,11 @@ Image::Image(int width, int height)
     _raster = new RGB[width * height];
 }
 
+Image::Image(const std::string& file)
+{
+    ;
+}
+
 void Image::set(int index, const RGB& color)
 {
     _raster[index] = color;
@@ -33,7 +38,7 @@ void Image::gammaCorrect(double gamma)
     // }
 }
 
-void Image::loadPPM(std::string path)
+void Image::loadPPM(const std::string& path)
 {
     // // open file
     // std::ifstream in(path);
@@ -75,7 +80,7 @@ void Image::loadPPM(std::string path)
     // in.close();
 }
 
-void Image::dumpPPM(std::string path)
+void Image::dumpPPM(const std::string& path)
 {
     // open file
     std::ofstream out(path);

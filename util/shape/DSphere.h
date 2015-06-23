@@ -17,6 +17,8 @@ public:
         double time) const;
 
     Vector center(double time) const;
+
+    RGB colorAt(const Vector& pos) const;
 	
 private:
     double _tmin, _tmax; // time range

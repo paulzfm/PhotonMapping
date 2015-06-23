@@ -40,6 +40,8 @@ public:
 
     double area() const;
 
+    RGB colorAt(const Vector& pos) const;
+
     // @override
     void setMaterial(const Material& m);
 

@@ -30,6 +30,8 @@ public:
 
     double area() const;
 
+    RGB colorAt(const Vector& pos) const;
+
     Vector A;
     Vector B;
     Vector C;

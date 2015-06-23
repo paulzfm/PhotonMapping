@@ -10,6 +10,12 @@ void Shape::setMaterial(const Material& m)
     color = m.color;
 }
 
+void Shape::setTexture(const std::string& file)
+{
+    _texture = std::unique_ptr<Image>(new Image(file));
+}
+
+
 /*
 Ray Shape::reflect(const Ray& incidence, HitRecord& record)
 {

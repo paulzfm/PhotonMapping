@@ -14,8 +14,8 @@ public:
         const std::string& CLS);
 
     bool hit(const Ray& ray, double time, HitRecord& record) const;
-    bool shadowHit(const Ray& ray, double tmin, double tmax, 
-        double time) const;
+
+    RGB colorAt(const Vector& pos) const;
 
     Vector c;
     double r;

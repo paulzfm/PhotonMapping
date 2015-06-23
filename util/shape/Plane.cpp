@@ -15,8 +15,16 @@ bool Plane::hit(const Ray& ray, double time, HitRecord& record) const
     // Hit! Let's record it.
     record.t = b / a;
     record.n = n;
-    record.color = color;
     return true;
+}
+
+RGB Plane::colorAt(const Vector& pos) const
+{
+    if (_texture) {
+        return RGB();
+    } else {
+        return color;
+    }
 }
 
 std::shared_ptr<Shape> Plane::parse(const JsonBox::Value& val, 

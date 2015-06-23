@@ -59,7 +59,6 @@ bool Quad::hit(const Ray& ray, double time, HitRecord& record) const
     // Hit! Let's record it.
     record.t = b / a;
     record.n = normal;
-    record.color = color;
     return true;
 }
 
@@ -67,6 +66,16 @@ double Quad::area() const
 {
     return _area;
 }
+
+RGB Quad::colorAt(const Vector& pos) const
+{
+    if (_texture) {
+        return RGB();
+    } else {
+        return color;
+    }
+}
+
 
 std::shared_ptr<Light> Quad::parse(const JsonBox::Value& val,
     const std::string& CLS)

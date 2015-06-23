@@ -14,6 +14,8 @@ public:
     static std::shared_ptr<Light> parse(const JsonBox::Value& val,
         const std::string& CLS);
 
+    RGB colorAt(const Vector& pos) const;
+
     Vector pos;
 };
 

@@ -14,6 +14,8 @@ public:
 
     bool hit(const Ray& ray, double time, HitRecord& record) const;
 
+    RGB colorAt(const Vector& pos) const;
+
     Vector n; // normal
     Vector p; // point
 };

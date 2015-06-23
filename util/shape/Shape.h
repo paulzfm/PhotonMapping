@@ -8,9 +8,10 @@
 #include "../RGB.h"
 #include "../Parser.h"
 #include "../Material.h"
+#include "../Image.h"
 
-#include <Math.h>
 #include <string>
+#include <math.h>
 
 struct HitRecord
 {
@@ -24,17 +25,11 @@ class Shape
 public:
     void setMaterial(const Material& m);
 
-    virtual bool hit(const Ray& ray, double time, HitRecord& record) const = 0;
-    // virtual bool shadowHit(const Ray& ray, double tmin, double tmax, 
-        // double time) const = 0;
+    void setTexture(const std::string& file);
 
-    /*
-    Ray reflect(const Ray& incidence, HitRecord& record);
-    Ray refract(const Ray& incidence, HitRecord& record);
-    RGB lambert(const Ray& incidence, HitRecord& record, const RGB& light);
-    RGB phong(const Ray& incidence, HitRecord& record, const RGB& light, 
-        const Vector& view);
-    */
+    virtual bool hit(const Ray& ray, double time, HitRecord& record) const = 0;
+    
+    virtual RGB colorAt(const Vector& pos) const = 0;
 
     // params
     RGB color;
@@ -44,6 +39,9 @@ public:
     double absorvance;
     double roughness;
     double emittance;
+
+protected:
+    std::unique_ptr<Image> _texture;
 };
 
 #endif // UTIL_SHAPE_H_

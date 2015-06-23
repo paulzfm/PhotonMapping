@@ -27,6 +27,11 @@ Photon PointLight::randomPhoton() const
     return Photon();
 }
 
+RGB PointLight::colorAt(const Vector& pos) const
+{
+    return color;
+}
+
 std::shared_ptr<Light> PointLight::parse(const JsonBox::Value& val,
     const std::string& CLS)
 {

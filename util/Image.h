@@ -7,6 +7,7 @@
 class Image
 {
 public:
+    Image(const std::string& file);
     Image(int width, int height);
 
     // Get size.
@@ -19,8 +20,8 @@ public:
     void gammaCorrect(double gamma);
 
     // File I/O as .ppm format.
-    void loadPPM(std::string path);
-    void dumpPPM(std::string path);
+    void loadPPM(const std::string& path);
+    void dumpPPM(const std::string& path);
 
 private:
     RGB* _raster;
