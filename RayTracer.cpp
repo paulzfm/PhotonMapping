@@ -32,7 +32,7 @@ void RayTracer::setup(const std::string& file)
             Parser::checkObject(v, cls);
             JsonBox::Object m = v.getObject();
             Parser::checkParam(m, cls, "name", Parser::STRING);
-            materials[Parser::asString(m["name"])] = Material::parse(m);
+            materials[Parser::asString(m["name"])] = Material::parse(m, cls);
         }
     }
 

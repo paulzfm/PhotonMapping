@@ -24,7 +24,7 @@ int main(int argc, char** argv)
     // return test();
 
     RayTracer tracer;
-    tracer.setup("scenes/glass.json");
+    tracer.setup("scenes/balls.json");
     printf("building...\n");
     tracer.buildGlobalMap();
     tracer.buildCausticsMap();
