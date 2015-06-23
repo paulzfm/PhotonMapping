@@ -9,12 +9,12 @@
 Image::Image(int width, int height)
     : _width(width), _height(height)
 {
-    _raster = new RGB[width * height];
+    _raster = std::unique_ptr<RGB[]>(new RGB[width * height]);
 }
 
 Image::Image(const std::string& file)
 {
-    ;
+    loadPPM(file);
 }
 
 void Image::set(int index, const RGB& color)
@@ -40,44 +40,39 @@ void Image::gammaCorrect(double gamma)
 
 void Image::loadPPM(const std::string& path)
 {
-    // // open file
-    // std::ifstream in(path);
-    // if (!in) {
-    //     std::cerr << "Error: failed to open file [" << path << "].\n";
-    //     exit(1);
-    // }
+    // open file
+    std::ifstream in(path);
+    if (!in) {
+        std::cerr << "Error: failed to open file \"" << path << "\".\n";
+        exit(1);
+    }
 
-    // char tmp;
-    // int num;
-    // unsigned char red, green, blue;
+    char tmp;
+    int num;
+    unsigned char red, green, blue;
 
-    // // read header
-    // in >> tmp >> tmp;
-    // in >> _width >> _height >> num;
+    // read header
+    in >> tmp >> tmp;
+    in >> _width >> _height >> num;
 
-    // // allocate raster
-    // _raster = new RGB*[_width];
-    // for (int i = 0; i < _width; i++) {
-    //     _raster[i] =  new RGB[_height];
-    // }
+    // allocate raster
+    _raster = std::unique_ptr<RGB[]>(new RGB[_width * _height]);
 
-    // // new line
-    // in >> tmp;
+    // new line
+    in >> tmp;
 
-    // // read pixels
-    // for (int i = 0; i < _width; i++) {
-    //     for (int j = _height - 1; j >= 0; j--) {
-    //         in >> red >> blue >> green;
-    //         _raster[i][j] = RGB(
-    //             (double)(red / 255.0),
-    //             (double)(green / 255.0),
-    //             (double)(blue / 255.0)
-    //         );
-    //     }
-    // }
+    // read pixels
+    for (int i = 0; i < _width * _height; i++) {
+        in >> red >> blue >> green;
+        _raster[i] = RGB(
+            (double)(red / 255.0),
+            (double)(green / 255.0),
+            (double)(blue / 255.0)
+        );
+    }
 
-    // // close file
-    // in.close();
+    // close file
+    in.close();
 }
 
 void Image::dumpPPM(const std::string& path)

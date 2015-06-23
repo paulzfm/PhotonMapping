@@ -24,7 +24,7 @@ public:
     void dumpPPM(const std::string& path);
 
 private:
-    RGB* _raster;
+    std::unique_ptr<RGB[]> _raster;
     int _width;
     int _height;
 };
