@@ -22,20 +22,9 @@ void Image::set(int index, const RGB& color)
     _raster[index] = color;
 }
 
-void Image::gammaCorrect(double gamma)
+RGB Image::get(int x, int y)
 {
-    // RGB tmp;
-    // double power = 1.0 / gamma;
-    // for (int i = 0; i < _width; i++) {
-    //     for (int j = 0; j < _height; j++) {
-    //         tmp = _raster[i][j];
-    //         _raster[i][j] = RGB(
-    //             pow(tmp.r, power),
-    //             pow(tmp.g, power),
-    //             pow(tmp.b, power)
-    //         );
-    //     }
-    // }
+    return _raster[x * _width + y];
 }
 
 void Image::loadPPM(const std::string& path)

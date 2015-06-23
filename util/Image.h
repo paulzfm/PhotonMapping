@@ -14,10 +14,11 @@ public:
     int width() const  { return _width;  };
     int height() const { return _height; };
 
-    // Set pixel with the given color, return false if out of range.
+    // Set pixel with the given color.
     void set(int index, const RGB& color);
 
-    void gammaCorrect(double gamma);
+    // Get color at pixel (x, y).
+    RGB get(int x, int y);
 
     // File I/O as .ppm format.
     void loadPPM(const std::string& path);
