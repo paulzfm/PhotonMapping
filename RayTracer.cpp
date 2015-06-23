@@ -7,6 +7,7 @@
 #include "util/shape/DSphere.h"
 #include "util/shape/PointLight.h"
 #include "util/shape/Quad.h"
+#include "util/Sample.h"
 
 #include <stdlib.h>
 #include <omp.h>
@@ -136,11 +137,13 @@ void RayTracer::setup(const std::string& file)
 
     // initialize
     _global_map = std::unique_ptr<KDT>(new KDT);
+    _caustics_map = std::unique_ptr<KDT>(new KDT);
     _env = std::unique_ptr<Material>(new Material(0, 0, 0, 1, RGB(1, 1, 1)));
 
     // summary
     printf("Settings:\n");
     printf("\tnum global photons: %d\n", _num_global_photons);
+    printf("\tnum caustics photons: %d\n", _num_caustics_photons);
     printf("\tmax photon bounce: %d\n", _max_photon_bounce);
     printf("\tmax tracing depth: %d\n", _max_tracing_depth);
     printf("\tgathering radius: %lf\n", _gathering_radius);
@@ -150,7 +153,8 @@ void RayTracer::setup(const std::string& file)
     printf("\tlights: %lu\n", _scene->lights.size());
     printf("\tobjects: %lu\n", _scene->objects.size());
 
-    _scene->print();
+    // _samples_per_pixel = 225;
+    _samples_per_pixel = 100;
 }
 
 void RayTracer::parseParams(const JsonBox::Value& val)
@@ -160,6 +164,7 @@ void RayTracer::parseParams(const JsonBox::Value& val)
     
     JsonBox::Object obj = val.getObject();
     Parser::checkOption(obj, CLS, "num_global_photons", Parser::INTEGER, "10000");
+    Parser::checkOption(obj, CLS, "num_caustics_photons", Parser::INTEGER, "10000");
     Parser::checkOption(obj, CLS, "max_photon_bounce", Parser::INTEGER, "10");
     Parser::checkOption(obj, CLS, "max_tracing_depth", Parser::INTEGER, "10");
     Parser::checkOption(obj, CLS, "gathering_radius", Parser::NUMBER, "2.0");
@@ -167,6 +172,9 @@ void RayTracer::parseParams(const JsonBox::Value& val)
 
     if (obj.find("num_global_photons") != obj.end()) {
         _num_global_photons = Parser::asInteger(obj["num_global_photons"]);
+    }
+    if (obj.find("num_caustics_photons") != obj.end()) {
+        _num_caustics_photons = Parser::asInteger(obj["num_caustics_photons"]);
     }
     if (obj.find("max_photon_bounce") != obj.end()) {
         _max_photon_bounce = Parser::asInteger(obj["max_photon_bounce"]);
@@ -265,7 +273,89 @@ void RayTracer::globalBounce(Photon& photon, int bounces)
 
 void RayTracer::buildCausticsMap()
 {
+    double sum = 0;
+    for (const auto& light : _scene->lights) {
+        sum += light->area() * light->emittance;
+    }
 
+    for (const auto& light : _scene->lights) {
+        int n = light->area() * light->emittance * _num_caustics_photons / sum;
+        for (int i = 0; i < n; ++i) {
+            Photon photon = light->randomPhoton();
+            causticsBounce(photon, 0);
+        }
+    }
+
+    _caustics_map->balance();
+    printf("%d caustics photon emitted.\n", _caustics_map->size());
+}
+
+void RayTracer::causticsBounce(Photon& photon, int bounces)
+{
+    if (bounces >= _max_photon_bounce || photon.power.isBlack()) {
+        return;
+    }
+
+    TraceRecord record = _scene->intersect(photon.ray);
+
+    if (!record.hit) {
+        return;
+    }
+
+    if (photon.ray.inside) {
+        record.n = -record.n;
+    }
+    photon.ray.o = record.v;
+
+    double absorvance = record.obj->absorvance;
+    double roughness = record.obj->roughness;
+    double reflectance;
+    if (photon.ray.inside) {
+        reflectance = this->reflectance(photon.ray.d, record.n, 
+            record.obj->index_of_refraction, _env->index_of_refraction);
+    } else {
+        reflectance = this->reflectance(photon.ray.d, record.n,
+            _env->index_of_refraction, record.obj->index_of_refraction);
+    }
+    reflectance *= (1 - absorvance);
+    double refractance = (1 - absorvance) * (1 - reflectance);
+
+    double random = drand48(); // russian roulette
+    if (random < absorvance) { // absorb
+        return;
+    }
+
+    if (random < absorvance + reflectance) { // reflect
+        photon.power.min(record.color);
+
+        if ((random - absorvance) / reflectance < roughness) { // diffuse reflect
+            photon.ray.d = record.n;
+            if (photon.caustics) {
+                storePhoton(CAUSTICS_MAP, photon);
+            }
+            // photon.ray.d = diffuse(record.n, roughness);
+            // return;
+        } else { // specular reflect
+            photon.ray.d = reflect(photon.ray.d, record.n);
+        }
+    } else { // refract
+        if (photon.ray.inside) {
+            photon.ray.d = refract(photon.ray.d, record.n, record.obj->index_of_refraction, 
+                _env->index_of_refraction);
+        } else {
+            photon.ray.d = refract(photon.ray.d, record.n, _env->index_of_refraction, 
+                record.obj->index_of_refraction);
+        }
+
+        // reverse
+        photon.ray.inside = !photon.ray.inside;
+
+        // flag
+        photon.caustics = true;
+    }
+
+    // continue
+    causticsBounce(photon, bounces + 1);
 }
 
 void RayTracer::renderMap()
@@ -338,7 +428,7 @@ void RayTracer::renderMap2()
         _img->dumpPPM("test.ppm");
 }
 
-void RayTracer::render()
+void RayTracer::fastRender()
 {
     for (const auto& c : _cameras) {
         int width = c->width;
@@ -349,12 +439,12 @@ void RayTracer::render()
 
         #pragma omp parallel for
         for (int i = 0; i < width * height; i++) {
-            img.set(i, pixelColor(c->rayAt(i % width, i / width), 1, 1.0));
+            img.set(i, pixelColor(c->rayAt(i % width, i / width)));
 
             if (!(i % width)) {
                 #pragma omp critical
                 {
-                    std::cout << "\r                                \r"; /* 30 spaces to cleanup the line and assure cursor is on last_char_pos + 1 */
+                    std::cout << "\r                                \r";
                     std::cout << "Rendering (progress: " << (cnt += width) * 100.0 / (width * height) << "%)";
                     std::cout.flush();
                 }
@@ -366,8 +456,43 @@ void RayTracer::render()
     }
 }
 
-void RayTracer::distributionRender()
+void RayTracer::render()
 {
+    for (const auto& c : _cameras) {
+        int width = c->width;
+        int height = c->height;
+        Image img(width, height);
+
+        int cnt = 0;
+
+        #pragma omp parallel for
+        for (int i = 0; i < width * height; i++) {
+            // uniform sample
+            std::vector<Point> samples(_samples_per_pixel);
+            Sample::jitter(samples, _samples_per_pixel);
+            
+            // render each pixel several times
+            RGB color;
+            for (const auto& p : samples) {
+                color += pixelColor(c->rayAt(i % width + p.x - 0.5, i / width + p.y - 0.5));
+            }
+
+            // set pixel with average color
+            img.set(i, color / (double)_samples_per_pixel);
+
+            if (!(i % width)) {
+                #pragma omp critical
+                {
+                    std::cout << "\r                                \r";
+                    std::cout << "Rendering (progress: " << (cnt += width) * 100.0 / (width * height) << "%)";
+                    std::cout.flush();
+                }
+            }
+        }
+        std::cout << std::endl;
+
+        img.dumpPPM("test.ppm");
+    }
 }
 
 RGB RayTracer::pixelColor(const Ray& ray, int depth, double relevance)
@@ -434,7 +559,9 @@ RGB RayTracer::pixelColor(const Ray& ray, int depth, double relevance)
         emit_color = record.obj->color;
     }
 
-    color = emittance * emit_color + reflectance * reflect_color + refractance * refract_color;
+    color = emittance * emit_color + reflectance * reflect_color 
+        + refractance * refract_color;
+        // + lookUpMap(CAUSTICS_MAP, record.v, _gathering_radius, record.n);
     color.scale();
 
     return color;
@@ -502,11 +629,20 @@ Vector RayTracer::reflect(const Vector& incidence, const Vector& normal)
 Vector RayTracer::refract(const Vector& incidence, const Vector& normal, 
     double from, double to)
 {
-    double a = from / to;
-    double cos1 = normal.dot(incidence) * normal.dot(incidence);
-    double cos2 = sqrt(a * cos1 - a + 1.0);
-    return (incidence * a + normal * (normal.dot(incidence) * a - cos2))
-        .normalize();
+    // double a = from / to;
+    // double cos1 = normal.dot(incidence) * normal.dot(incidence);
+    // double cos2 = sqrt(a * cos1 - a + 1.0);
+    // return (incidence * a + normal * (normal.dot(incidence) * a - cos2))
+    //     .normalize();
+
+    double n = from / to;
+    double cos1 = -(normal.dot(incidence));
+    double sine = n * n * (1.0 - cos1 * cos1);
+
+    assert(sine <= 1.0);
+
+    double cos2 = sqrt(1.0 - sine);
+    return (incidence * n + normal * (n * cos1 - cos2)).normalize();
 }
 
 Vector RayTracer::diffuse(const Vector& normal, double roughness)

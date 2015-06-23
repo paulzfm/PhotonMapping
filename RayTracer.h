@@ -28,7 +28,7 @@ public:
     
     // render
     void render();
-    void distributionRender();
+    void fastRender();
     void renderMap();
     void renderMap2();
 
@@ -48,19 +48,23 @@ public:
 
     // parameters
     int _num_global_photons;
+    int _num_caustics_photons;
     int _max_photon_bounce;
     int _max_tracing_depth;
     double _gathering_radius;
     double _exposure;
 
+    int _samples_per_pixel;
+
     // parse parameters
     void parseParams(const JsonBox::Value& val);
 
     // compute pixel's color
-    RGB pixelColor(const Ray& ray, int depth, double relevance);
+    RGB pixelColor(const Ray& ray, int depth = 0, double relevance = 1.0);
 
     // photon bouncing
     void globalBounce(Photon& photon, int bounces);
+    void causticsBounce(Photon& photon, int bounces);
 
     // store photon
     void storePhoton(int type, const Photon& photon);
