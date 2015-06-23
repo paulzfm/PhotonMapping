@@ -15,7 +15,6 @@ struct TraceRecord
     Vector n; // normal vector
     Vector v; // hitting point
     std::shared_ptr<Shape> obj; // object
-    int idx;  // object index
     RGB color;
 
     TraceRecord() { hit = false; }

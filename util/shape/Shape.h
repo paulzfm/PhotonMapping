@@ -17,7 +17,6 @@ struct HitRecord
 {
     double t;
     Vector n;
-    RGB color;
 };
 
 class Shape

@@ -9,19 +9,18 @@ TraceRecord Scene::intersect(const Ray& ray)
     TraceRecord res;
     double max_dis = std::numeric_limits<double>::max();
 
-    for (int i = 0; i < objects.size(); i++) {
+    for (const auto& obj : objects) {
         HitRecord record;
-        if (objects[i]->hit(ray, 0, record)) {
+        if (obj->hit(ray, 0, record)) {
             Vector v = ray.o + record.t * ray.d;
             double dis = (v - ray.o).square();
             if (dis < max_dis) {
-                res.idx = i;
-                res.obj = objects[i];
+                res.obj = obj;
                 res.t = record.t;
                 res.n = record.n;
                 res.v = v;
                 res.hit = true;
-                res.color = record.color;
+                res.color = obj->colorAt(v);
                 max_dis = dis;
             }
         }
