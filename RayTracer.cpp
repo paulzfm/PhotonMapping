@@ -7,6 +7,7 @@
 #include "util/shape/DSphere.h"
 #include "util/shape/PointLight.h"
 #include "util/shape/Quad.h"
+#include "util/shape/Box.h"
 #include "util/Sample.h"
 
 #include <stdlib.h>
@@ -56,6 +57,8 @@ void RayTracer::setup(const std::string& file)
                 ptr = PointLight::parse(l);
             } else if (type == "quad") {
                 ptr = Quad::parse(l);
+            } else if (type == "box") {
+                ptr = Box::parse(l, cls);
             } else {
                 std::cerr << "Parse error: unrecognized light type \"" << type << "\".\n";
                 exit(1);
@@ -112,8 +115,6 @@ void RayTracer::setup(const std::string& file)
                 ptr = Sphere::parse(o);
             } else if (type == "triangle") {
                 ptr = Triangle::parse(o);
-            } else if (type == "box") {
-
             } else {
                 std::cerr << "Parse error: unrecognized object type \"" << type << "\".\n";
                 exit(1);
@@ -629,20 +630,20 @@ Vector RayTracer::reflect(const Vector& incidence, const Vector& normal)
 Vector RayTracer::refract(const Vector& incidence, const Vector& normal, 
     double from, double to)
 {
-    // double a = from / to;
-    // double cos1 = normal.dot(incidence) * normal.dot(incidence);
-    // double cos2 = sqrt(a * cos1 - a + 1.0);
-    // return (incidence * a + normal * (normal.dot(incidence) * a - cos2))
-    //     .normalize();
+    double a = from / to;
+    double cos1 = normal.dot(incidence) * normal.dot(incidence);
+    double cos2 = sqrt(a * cos1 - a + 1.0);
+    return (incidence * a + normal * (normal.dot(incidence) * a - cos2))
+        .normalize();
 
-    double n = from / to;
-    double cos1 = -(normal.dot(incidence));
-    double sine = n * n * (1.0 - cos1 * cos1);
+    // double n = from / to;
+    // double cos1 = -(normal.dot(incidence));
+    // double sine = n * n * (1.0 - cos1 * cos1);
 
-    assert(sine <= 1.0);
+    // // assert(sine <= 1.0);
 
-    double cos2 = sqrt(1.0 - sine);
-    return (incidence * n + normal * (n * cos1 - cos2)).normalize();
+    // double cos2 = sqrt(1.0 - sine);
+    // return (incidence * n + normal * (n * cos1 - cos2)).normalize();
 }
 
 Vector RayTracer::diffuse(const Vector& normal, double roughness)
