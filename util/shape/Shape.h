@@ -25,8 +25,6 @@ class Shape
 public:
     void setMaterial(const Material& m);
 
-    void setTexture(const std::string& file);
-
     virtual bool hit(const Ray& ray, double time, HitRecord& record) const = 0;
     
     virtual RGB colorAt(const Vector& pos) const = 0;

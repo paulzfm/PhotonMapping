@@ -4,6 +4,8 @@
 #include "RGB.h"
 #include "Parser.h"
 
+#include <string>
+
 class Material
 {
 public:
@@ -22,9 +24,10 @@ public:
     double roughness;
     double emittance;
 
-    static Material parse(const JsonBox::Value& val);
+    std::string texture;
 
-    const static std::string CLS;
+    static Material parse(const JsonBox::Value& val,
+        const std::string& CLS);
 };
 
 #endif // UTIL_MATERIAL_H_

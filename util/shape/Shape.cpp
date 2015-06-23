@@ -8,11 +8,11 @@ void Shape::setMaterial(const Material& m)
     emittance = m.emittance;
     roughness = m.roughness;
     color = m.color;
-}
 
-void Shape::setTexture(const std::string& file)
-{
-    _texture = std::unique_ptr<Image>(new Image(file));
+    // texture
+    if (m.texture != "") {
+        _texture = std::unique_ptr<Image>(new Image(m.texture));
+    }
 }
 
 

@@ -1,8 +1,7 @@
 #include "Material.h"
 
-const std::string Material::CLS = "materials";
-
-Material Material::parse(const JsonBox::Value& val)
+Material Material::parse(const JsonBox::Value& val,
+    const std::string& CLS)
 {
     Material m;
 
@@ -29,6 +28,9 @@ Material Material::parse(const JsonBox::Value& val)
     }
     if (obj.find("color") != obj.end()) {
         m.color = Parser::asRGB(obj["color"]);
+    }
+    if (obj.find("texture") != obj.end()) {
+        m.texture = Parser::asString(obj["texture"]);
     }
 
     return m;
