@@ -19,9 +19,11 @@ public:
 	RGB operator + (double t) const;
 	RGB operator * (double t) const;
 	RGB operator * (const RGB& that) const;
+	RGB operator / (double t) const;
 	void operator += (const RGB& that);
 	void operator += (double t);
 	void operator *= (double t);
+	void operator /= (double t);
 	
 	friend bool operator == (const RGB& v1, const RGB& v2);
 	friend bool operator != (const RGB& v1, const RGB& v2);

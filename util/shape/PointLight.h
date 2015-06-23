@@ -11,7 +11,8 @@ public:
 
     Photon randomPhoton() const;
 
-    static std::shared_ptr<Light> parse(const JsonBox::Value& val);
+    static std::shared_ptr<Light> parse(const JsonBox::Value& val,
+        const std::string& CLS);
 
     Vector pos;
 };

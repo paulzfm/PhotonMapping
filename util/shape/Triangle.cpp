@@ -1,7 +1,5 @@
 #include "Triangle.h"
 
-const std::string Triangle::CLS = "objects:triangle";
-
 bool Triangle::hit(const Ray& ray, double time, HitRecord& record) const
 {
     double t;
@@ -99,7 +97,8 @@ bool Triangle::shadowHit(const Ray& ray, double tmin, double tmax,
     return true;
 }
 
-std::shared_ptr<Shape> Triangle::parse(const JsonBox::Value& val)
+std::shared_ptr<Shape> Triangle::parse(const JsonBox::Value& val,
+    const std::string& CLS)
 {
     Parser::checkObject(val, CLS);
 

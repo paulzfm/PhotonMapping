@@ -31,6 +31,7 @@ int main(int argc, char** argv)
     printf("rendering...\n");
     tracer.fastRender();
     // tracer.render();
+    // tracer.renderMap();
     printf("\nDone.\n");
      
     return 0;

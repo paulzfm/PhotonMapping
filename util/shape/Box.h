@@ -40,6 +40,9 @@ public:
 
     double area() const;
 
+    // @override
+    void setMaterial(const Material& m);
+
 private:
     Vector _a, _b, _c;
     std::vector<Quad> _quads; // 6 faces

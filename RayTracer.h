@@ -74,7 +74,7 @@ public:
         const Vector& normal);
 
     // helper functions
-    double reflectance(const Vector &dir, const Vector &normal, double from, double to);
+    double getReflectance(const Vector &dir, const Vector &normal, double from, double to);
     Vector reflect(const Vector& incidence, const Vector& normal);
     Vector refract(const Vector& incidence, const Vector& normal, 
         double from, double to);

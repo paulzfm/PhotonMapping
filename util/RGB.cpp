@@ -40,6 +40,11 @@ RGB RGB::operator * (const RGB& that) const
 	return RGB(r * that.r, g * that.g, b * that.b);
 }
 
+RGB RGB::operator / (double t) const
+{
+	return RGB(r / t, g / t, b / t);
+}
+
 void RGB::operator += (const RGB& that)
 {
 	r += that.r;
@@ -59,6 +64,13 @@ void RGB::operator *= (double t)
 	r *= t;
 	g *= t;
 	b *= t;
+}
+
+void RGB::operator /= (double t)
+{
+	r /= t;
+	g /= t;
+	b /= t;
 }
 
 bool operator == (const RGB& v1, const RGB& v2)

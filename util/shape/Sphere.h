@@ -10,7 +10,8 @@ public:
 	Sphere(const Vector& center, double radius) 
         : c(center), r(radius) { _sqr = r * r; }
 
-    static std::shared_ptr<Shape> parse(const JsonBox::Value& val);
+    static std::shared_ptr<Shape> parse(const JsonBox::Value& val,
+        const std::string& CLS);
 
     bool hit(const Ray& ray, double time, HitRecord& record) const;
     bool shadowHit(const Ray& ray, double tmin, double tmax, 
@@ -18,8 +19,6 @@ public:
 
     Vector c;
     double r;
-
-    const static std::string CLS;
 	
 protected:
 	double _sqr; // r ^ 2

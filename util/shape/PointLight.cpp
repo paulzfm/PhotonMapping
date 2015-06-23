@@ -27,7 +27,8 @@ Photon PointLight::randomPhoton() const
     return Photon();
 }
 
-std::shared_ptr<Light> PointLight::parse(const JsonBox::Value& val)
+std::shared_ptr<Light> PointLight::parse(const JsonBox::Value& val,
+    const std::string& CLS)
 {
     return nullptr;
 }

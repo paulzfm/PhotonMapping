@@ -1,7 +1,5 @@
 #include "Sphere.h"
 
-const std::string Sphere::CLS = "objects:sphere";
-
 bool Sphere::hit(const Ray& ray, double time, HitRecord& record) const
 {
     // double A = ray.d.dot(ray.d);
@@ -75,7 +73,8 @@ bool Sphere::shadowHit(const Ray& ray, double tmin, double tmax,
     return true;
 }
 
-std::shared_ptr<Shape> Sphere::parse(const JsonBox::Value& val)
+std::shared_ptr<Shape> Sphere::parse(const JsonBox::Value& val, 
+    const std::string& CLS)
 {
     Parser::checkObject(val, CLS);
 

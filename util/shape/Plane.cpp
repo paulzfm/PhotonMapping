@@ -1,7 +1,5 @@
 #include "Plane.h"
 
-const std::string Plane::CLS = "objects:plane";
-
 bool Plane::hit(const Ray& ray, double time, HitRecord& record) const
 {
     double a = n.dot(ray.d);
@@ -21,7 +19,8 @@ bool Plane::hit(const Ray& ray, double time, HitRecord& record) const
     return true;
 }
 
-std::shared_ptr<Shape> Plane::parse(const JsonBox::Value& val)
+std::shared_ptr<Shape> Plane::parse(const JsonBox::Value& val, 
+    const std::string& CLS)
 {
     Parser::checkObject(val, CLS);
 

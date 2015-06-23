@@ -15,6 +15,9 @@ struct Photon
 {
     RGB power; // power
     Ray ray;   // ray
+    bool caustics;
+
+    Photon() : caustics(false) {}
 
     // postion: for KDT
     typedef double value_type;

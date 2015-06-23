@@ -1,14 +1,12 @@
 #include "Quad.h"
 
-const std::string Quad::CLS = "lights:quad";
-
 Quad::Quad(const Vector& a, const Vector& b, const Vector& c)
     : A(a), B(b), C(c)
 {
     _u = b - a;
     _v = c - a;
     _area = _u.cross(_v).length();
-    _n = _u.cross(_v).normalize();
+    normal = _u.cross(_v).normalize();
 }
 
 Ray Quad::randomRay() const
@@ -18,7 +16,7 @@ Ray Quad::randomRay() const
 
     return Ray(
         A + _u * alpha + _v * beta,
-        _n.noise(roughness)
+        normal.noise(roughness)
     );
 }
 
@@ -29,7 +27,7 @@ Photon Quad::randomPhoton() const
 
     Photon photon;
     photon.ray.o = A + _u * alpha + _v * beta;
-    photon.ray.d = _n.noise(roughness);
+    photon.ray.d = normal.noise(roughness);
     photon.power = color;
 
     return photon;
@@ -37,12 +35,12 @@ Photon Quad::randomPhoton() const
 
 bool Quad::hit(const Ray& ray, double time, HitRecord& record) const
 {
-    double a = _n.dot(ray.d);
+    double a = normal.dot(ray.d);
     if (a == 0) {
         return false;
     }
 
-    double b = _n.dot(A - ray.o);
+    double b = normal.dot(A - ray.o);
     if (a * b < EPS) {
         return false;
     }
@@ -60,7 +58,7 @@ bool Quad::hit(const Ray& ray, double time, HitRecord& record) const
 
     // Hit! Let's record it.
     record.t = b / a;
-    record.n = _n;
+    record.n = normal;
     record.color = color;
     return true;
 }
@@ -70,7 +68,8 @@ double Quad::area() const
     return _area;
 }
 
-std::shared_ptr<Light> Quad::parse(const JsonBox::Value& val)
+std::shared_ptr<Light> Quad::parse(const JsonBox::Value& val,
+    const std::string& CLS)
 {
     Parser::checkObject(val, CLS);
 

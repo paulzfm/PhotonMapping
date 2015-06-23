@@ -54,9 +54,9 @@ void RayTracer::setup(const std::string& file)
 
             std::shared_ptr<Light> ptr;
             if (type == "point") {
-                ptr = PointLight::parse(l);
+                ptr = PointLight::parse(l, cls);
             } else if (type == "quad") {
-                ptr = Quad::parse(l);
+                ptr = Quad::parse(l, cls);
             } else if (type == "box") {
                 ptr = Box::parse(l, cls);
             } else {
@@ -110,11 +110,11 @@ void RayTracer::setup(const std::string& file)
 
             std::shared_ptr<Shape> ptr;
             if (type == "plane") {
-                ptr = Plane::parse(o);
+                ptr = Plane::parse(o, cls);
             } else if (type == "sphere") {
-                ptr = Sphere::parse(o);
+                ptr = Sphere::parse(o, cls);
             } else if (type == "triangle") {
-                ptr = Triangle::parse(o);
+                ptr = Triangle::parse(o, cls);
             } else {
                 std::cerr << "Parse error: unrecognized object type \"" << type << "\".\n";
                 exit(1);
@@ -222,6 +222,7 @@ void RayTracer::globalBounce(Photon& photon, int bounces)
         return;
     }
 
+
     if (photon.ray.inside) {
         record.n = -record.n;
     }
@@ -231,10 +232,10 @@ void RayTracer::globalBounce(Photon& photon, int bounces)
     double roughness = record.obj->roughness;
     double reflectance;
     if (photon.ray.inside) {
-        reflectance = this->reflectance(photon.ray.d, record.n, 
+        reflectance = getReflectance(photon.ray.d, record.n, 
             record.obj->index_of_refraction, _env->index_of_refraction);
     } else {
-        reflectance = this->reflectance(photon.ray.d, record.n,
+        reflectance = getReflectance(photon.ray.d, record.n,
             _env->index_of_refraction, record.obj->index_of_refraction);
     }
     reflectance *= (1 - absorvance);
@@ -312,10 +313,10 @@ void RayTracer::causticsBounce(Photon& photon, int bounces)
     double roughness = record.obj->roughness;
     double reflectance;
     if (photon.ray.inside) {
-        reflectance = this->reflectance(photon.ray.d, record.n, 
+        reflectance = getReflectance(photon.ray.d, record.n, 
             record.obj->index_of_refraction, _env->index_of_refraction);
     } else {
-        reflectance = this->reflectance(photon.ray.d, record.n,
+        reflectance = getReflectance(photon.ray.d, record.n,
             _env->index_of_refraction, record.obj->index_of_refraction);
     }
     reflectance *= (1 - absorvance);
@@ -500,7 +501,7 @@ RGB RayTracer::pixelColor(const Ray& ray, int depth, double relevance)
 {
     TraceRecord record = _scene->intersect(ray);
 
-    if (depth >= _max_tracing_depth || relevance < 1e-10 || !record.hit) {
+    if (depth >= _max_tracing_depth || relevance < EPS || !record.hit) {
         return RGB(); // black
     }
 
@@ -512,13 +513,13 @@ RGB RayTracer::pixelColor(const Ray& ray, int depth, double relevance)
     double roughness = record.obj->roughness;
     double reflectance;
     if (ray.inside) {
-        reflectance = this->reflectance(ray.d, record.n, 
+        reflectance = getReflectance(ray.d, record.n, 
             record.obj->index_of_refraction, _env->index_of_refraction);
     } else {
-        reflectance = this->reflectance(ray.d, record.n,
+        reflectance = getReflectance(ray.d, record.n,
             _env->index_of_refraction, record.obj->index_of_refraction);
     }
-    reflectance *= (1 - emittance);
+    reflectance = (1 - emittance) * reflectance;
     double refractance = 1 - reflectance - emittance;
 
     // reflectance + refractance + emittance = 1
@@ -535,33 +536,26 @@ RGB RayTracer::pixelColor(const Ray& ray, int depth, double relevance)
     }
 
     if (refractance > 0) { // refract
+        Vector dir;
         if (ray.inside) {  // refract from object into air
-            refract_color = pixelColor(
-                Ray(
-                    record.v, 
-                    refract(ray.d, record.n, record.obj->index_of_refraction, 
-                        _env->index_of_refraction),
-                    false
-                ), depth + 1, relevance * refractance
-            ) * record.obj->color;
+            dir = refract(ray.d, record.n, record.obj->index_of_refraction, 
+                _env->index_of_refraction);
+            refract_color = record.color;
         } else {  // refract from air into object
-            refract_color = pixelColor(
-                Ray(
-                    record.v, 
-                    refract(ray.d, record.n, _env->index_of_refraction, 
-                        record.obj->index_of_refraction),
-                    true
-                ), depth + 1, relevance * refractance
-            ) * RGB(1, 1, 1);
+            dir = refract(ray.d, record.n, _env->index_of_refraction,
+                record.obj->index_of_refraction);
+            refract_color = RGB(1, 1, 1);
         }
+
+        refract_color = refract_color * pixelColor(Ray(record.v, dir, !ray.inside),
+            depth + 1, relevance * refractance);
     }
 
     if (emittance > 0) { // emit
         emit_color = record.obj->color;
     }
 
-    color = emittance * emit_color + reflectance * reflect_color 
-        + refractance * refract_color;
+    color = emittance * emit_color + reflectance * reflect_color + refractance * refract_color;
         // + lookUpMap(CAUSTICS_MAP, record.v, _gathering_radius, record.n);
     color.scale();
 
@@ -598,7 +592,7 @@ RGB RayTracer::lookUpMap(int type, const Vector& center, double radius,
 }
 
 // helper functions
-double RayTracer::reflectance(const Vector &dir, const Vector &normal, 
+double RayTracer::getReflectance(const Vector &dir, const Vector &normal, 
     double from, double to)
 {
     /*
@@ -630,11 +624,11 @@ Vector RayTracer::reflect(const Vector& incidence, const Vector& normal)
 Vector RayTracer::refract(const Vector& incidence, const Vector& normal, 
     double from, double to)
 {
-    double a = from / to;
-    double cos1 = normal.dot(incidence) * normal.dot(incidence);
-    double cos2 = sqrt(a * cos1 - a + 1.0);
-    return (incidence * a + normal * (normal.dot(incidence) * a - cos2))
-        .normalize();
+    // double a = from / to;
+    // double cos1 = normal.dot(incidence) * normal.dot(incidence);
+    // double cos2 = sqrt(a * cos1 - a + 1.0);
+    // return (incidence * a + normal * (normal.dot(incidence) * a - cos2))
+        // .normalize();
 
     // double n = from / to;
     // double cos1 = -(normal.dot(incidence));
@@ -644,6 +638,16 @@ Vector RayTracer::refract(const Vector& incidence, const Vector& normal,
 
     // double cos2 = sqrt(1.0 - sine);
     // return (incidence * n + normal * (n * cos1 - cos2)).normalize();
+
+    double n = from / to;
+    double cosI = -(normal.dot(incidence));
+    double sinT2 = n * n * (1.0 - cosI * cosI);
+
+    assert(sinT2 <= 1.0);
+
+    double cosT = sqrt(1.0 - sinT2);
+
+    return (incidence * n + normal * (n * cosI - cosT)).normalize();
 }
 
 Vector RayTracer::diffuse(const Vector& normal, double roughness)
