@@ -8,7 +8,7 @@
 #include "../RGB.h"
 #include "../Parser.h"
 #include "../Material.h"
-#include "../Image.h"
+#include "../Texture.h"
 
 #include <string>
 #include <math.h>
@@ -38,7 +38,7 @@ public:
     double emittance;
 
 protected:
-    std::unique_ptr<Image> _texture;
+    std::unique_ptr<Texture> _texture;
 };
 
 #endif // UTIL_SHAPE_H_

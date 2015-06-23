@@ -11,7 +11,7 @@ void Shape::setMaterial(const Material& m)
 
     // texture
     if (m.texture != "") {
-        _texture = std::unique_ptr<Image>(new Image(m.texture));
+        _texture = std::unique_ptr<Texture>(new Texture(m.texture));
     }
 }
 

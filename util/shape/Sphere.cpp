@@ -29,7 +29,15 @@ bool Sphere::hit(const Ray& ray, double time, HitRecord& record) const
 RGB Sphere::colorAt(const Vector& pos) const
 {
     if (_texture) {
-        return RGB();
+        Vector n = (pos - c) / r;
+
+        // calculate UV coordinates
+        double theta = acos(n.z);
+        double phi = atan2(n.y, n.x);
+        if (phi < EPS) {
+            phi += PI * 2;
+        }
+        return _texture->value(Point(phi * 0.159154943092, (PI - theta) * 0.318309886184));
     } else {
         return color;
     }
