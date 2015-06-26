@@ -6,15 +6,30 @@
 
 #include "util/Vector.h"
 #include "util/Sample.h"
-
+#include "util/Image.h"
 
 int test()
 {
-    std::vector<Point> points(9);
-    Sample::jitter(points, 9);
-    for (const auto p : points) {
-        std::cout << p << std::endl;
-    }
+    // Image img("wood.ppm");
+    // for (int i = 0; i < img.width(); i++) {
+    //     for (int j = 0; j < img.height(); j++) {
+    //         img.get(i, j);
+    //     }
+    // }
+
+    // int n = 5;
+    // std::vector<Point> samples;
+    // double inv = 1.0 / n;
+    //     double offset = inv / 2.0;
+    //     for (int i = 0; i < n; ++i) {
+    //         for (int j = 0; j < n; ++j) {
+    //             samples.push_back(Point(offset + inv * i - 0.5, offset + inv * j - 0.5));
+    //         }
+    //     }
+
+    // for (const auto& s : samples) {
+    //     std::cout << s << std::endl;
+    // }
 
     return 0;
 }
@@ -24,15 +39,14 @@ int main(int argc, char** argv)
     // return test();
 
     RayTracer tracer;
-    tracer.setup("scenes/balls.json");
-    printf("building...\n");
+    tracer.setup("scenes/glass.json");
     tracer.buildGlobalMap();
-    tracer.buildCausticsMap();
-    printf("rendering...\n");
-    tracer.fastRender();
-    // tracer.render();
+    // tracer.buildCausticsMap();
+    // tracer.fastRender();
+    tracer.render();
     // tracer.renderMap();
     printf("\nDone.\n");
      
     return 0;
 }
+

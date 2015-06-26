@@ -15,6 +15,8 @@
 
 void RayTracer::setup(const std::string& file)
 {
+    std::cout << "--> Loading scene file: " << file << "\n";
+
     JsonBox::Object obj = Parser::loadAndCheck(file);
     std::map<std::string, Material> materials;
 
@@ -142,7 +144,7 @@ void RayTracer::setup(const std::string& file)
     _env = std::unique_ptr<Material>(new Material(0, 0, 0, 1, RGB(1, 1, 1)));
 
     // summary
-    printf("Settings:\n");
+    printf("--> Settings\n");
     printf("\tnum global photons: %d\n", _num_global_photons);
     printf("\tnum caustics photons: %d\n", _num_caustics_photons);
     printf("\tmax photon bounce: %d\n", _max_photon_bounce);
@@ -193,6 +195,8 @@ void RayTracer::parseParams(const JsonBox::Value& val)
 
 void RayTracer::buildGlobalMap()
 {
+    printf("--> Building photon map\n");
+
     double sum = 0;
     for (const auto& light : _scene->lights) {
         sum += light->area() * light->emittance;
@@ -207,7 +211,7 @@ void RayTracer::buildGlobalMap()
     }
 
     _global_map->balance();
-    printf("%d global photon emitted.\n", _global_map->size());
+    printf("\t%d global photon emitted.\n", _global_map->size());
 }
 
 void RayTracer::globalBounce(Photon& photon, int bounces)
@@ -432,7 +436,11 @@ void RayTracer::renderMap2()
 
 void RayTracer::fastRender()
 {
+    int curr = 0;
+    int total = _cameras.size();
     for (const auto& c : _cameras) {
+        std::cout << "--> Rendering: " << c->output << " (" << ++curr << " / " << total << ")\n";
+
         int width = c->width;
         int height = c->height;
         Image img(width, height);
@@ -446,8 +454,8 @@ void RayTracer::fastRender()
             if (!(i % width)) {
                 #pragma omp critical
                 {
-                    std::cout << "\r                                \r";
-                    std::cout << "Rendering (progress: " << (cnt += width) * 100.0 / (width * height) << "%)";
+                    std::cout << "\r                             \r";
+                    std::cout << "\tprogress: " << (cnt += width) * 100.0 / (width * height) << "%";
                     std::cout.flush();
                 }
             }
@@ -467,26 +475,32 @@ void RayTracer::render()
 
         int cnt = 0;
 
+        int n = 10;
+        std::vector<Point> samples;
+        double inv = 1.0 / n;
+        double offset = inv / 2.0;
+        for (int i = 0; i < n; ++i) {
+            for (int j = 0; j < n; ++j) {
+                samples.push_back(Point(offset + inv * i - 0.5, offset + inv * j - 0.5));
+            }
+        }
+
         #pragma omp parallel for
         for (int i = 0; i < width * height; i++) {
-            // uniform sample
-            std::vector<Point> samples(_samples_per_pixel);
-            Sample::jitter(samples, _samples_per_pixel);
-            
             // render each pixel several times
             RGB color;
             for (const auto& p : samples) {
-                color += pixelColor(c->rayAt(i % width + p.x - 0.5, i / width + p.y - 0.5));
+                color += pixelColor(c->rayAt(i % width + p.x, i / width + p.y));
             }
 
             // set pixel with average color
-            img.set(i, color / (double)_samples_per_pixel);
+            img.set(i, color / (double)(n * n));
 
             if (!(i % width)) {
                 #pragma omp critical
                 {
-                    std::cout << "\r                                \r";
-                    std::cout << "Rendering (progress: " << (cnt += width) * 100.0 / (width * height) << "%)";
+                    std::cout << "\r                             \r";
+                    std::cout << "\tprogress: " << (cnt += width) * 100.0 / (width * height) << "%";
                     std::cout.flush();
                 }
             }
@@ -592,28 +606,27 @@ RGB RayTracer::lookUpMap(int type, const Vector& center, double radius,
 }
 
 // helper functions
+// refer to:
+//     http://www.bramz.net/data/writings/reflection_transmission.pdf
 double RayTracer::getReflectance(const Vector &dir, const Vector &normal, 
     double from, double to)
 {
-    /*
-     * Reflectance according to http://www.bramz.net/data/writings/reflection_transmission.pdf
-     */
-
     if (to == std::numeric_limits<double>::infinity())
         return 1.0;
 
     double n = from / to;
-    double cosI = -(normal.dot(dir));
-    double sinT2 = n * n * (1.0 - cosI * cosI);
+    double cos_i = -(normal.dot(dir));
+    double sin_t = n * n * (1.0 - cos_i * cos_i);
 
-    if (sinT2 > 1.0) /* inside TIR */
+    if (sin_t > 1.0) {
         return 1.0;
+    }
 
-    double cosT = sqrt(1.0 - sinT2);
-    double rOrth = (from * cosI - to * cosT) / (from * cosI + to * cosT);
-    double rPar = (to * cosI - from * cosT) / (to * cosI + from * cosT);
+    double cos_t = sqrt(1.0 - sin_t);
+    double r1 = (from * cos_i - to * cos_t) / (from * cos_i + to * cos_t);
+    double r2 = (to * cos_i - from * cos_t) / (to * cos_i + from * cos_t);
 
-    return (rOrth * rOrth + rPar * rPar) / 2.0;
+    return (r1 * r1 + r2 * r2) / 2.0;
 }
 
 Vector RayTracer::reflect(const Vector& incidence, const Vector& normal)
@@ -624,30 +637,15 @@ Vector RayTracer::reflect(const Vector& incidence, const Vector& normal)
 Vector RayTracer::refract(const Vector& incidence, const Vector& normal, 
     double from, double to)
 {
-    // double a = from / to;
-    // double cos1 = normal.dot(incidence) * normal.dot(incidence);
-    // double cos2 = sqrt(a * cos1 - a + 1.0);
-    // return (incidence * a + normal * (normal.dot(incidence) * a - cos2))
-        // .normalize();
-
-    // double n = from / to;
-    // double cos1 = -(normal.dot(incidence));
-    // double sine = n * n * (1.0 - cos1 * cos1);
-
-    // // assert(sine <= 1.0);
-
-    // double cos2 = sqrt(1.0 - sine);
-    // return (incidence * n + normal * (n * cos1 - cos2)).normalize();
-
     double n = from / to;
-    double cosI = -(normal.dot(incidence));
-    double sinT2 = n * n * (1.0 - cosI * cosI);
+    double cos_i = -(normal.dot(incidence));
+    double sin_t = n * n * (1.0 - cos_i * cos_i);
 
-    assert(sinT2 <= 1.0);
+    assert(sin_t <= 1.0);
 
-    double cosT = sqrt(1.0 - sinT2);
+    double cos_t = sqrt(1.0 - sin_t);
 
-    return (incidence * n + normal * (n * cosI - cosT)).normalize();
+    return (incidence * n + normal * (n * cos_i - cos_t)).normalize();
 }
 
 Vector RayTracer::diffuse(const Vector& normal, double roughness)

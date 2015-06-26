@@ -4,7 +4,15 @@
         { "name" : "light",             "color" : [1, 1, 1],  "roughness" : 1.00,     "absorvance" : 1.00,    "emittance" : 1.0,  "index_of_refraction" : 1.492 },
 
         { "name" : "mirror",            "color" : [1, 1, 1],  "roughness" : 0.02,     "absorvance" : 0.02,    "emittance" : 0.0,  "index_of_refraction" : "infinity" },
-
+        {
+            "name" : "wood",
+            "color" : [1, 1, 1],
+            "roughness" : 0.9,
+            "absorvance" : 0.02,
+            "emittance" : 0,
+            "index_of_refraction" : "infinity",
+            "texture" : "wood.ppm"
+        },
 
         { "name" : "glass",         "color" : [0, 0, 1],  "roughness" : 0.02,     "absorvance" : 0.02,    "emittance" : 0.0,  "index_of_refraction" : 1.7 },
 
@@ -38,7 +46,7 @@
         },
         {
             "type" : "sphere",
-            "material" : "mirror",
+            "material" : "wood",
             "center" : [-15, -30.0, 20],
             "radius" : 10,
             "name" : "sphere2"

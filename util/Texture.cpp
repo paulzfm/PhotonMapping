@@ -13,11 +13,11 @@ RGB Texture::value(const Point& uv)
     double tu = u - iu;
     double tv = v - iv;
 
-    RGB color = 
+    RGB color =
         _img.get(iu, iv) * (1 - tu) * (1 - tv) +
         _img.get(iu + 1, iv) * tu * (1 - tv) +
         _img.get(iu, iv + 1) * (1 - tu) * tv +
         _img.get(iu + 1, iv + 1) * tu * tv;
 
-   return color;
+    return color;
 }

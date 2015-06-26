@@ -1,0 +1,128 @@
+{
+    "materials":
+    [
+        {
+            "name" : "light",
+            "color" : [1, 1, 1],
+            "roughness" : 1,
+            "absorvance" : 1,
+            "emittance" : 1,
+            "index_of_refraction" : 1.492
+        },
+        { 
+            "name" : "mirror",
+            "color" : [1, 1, 1],
+            "roughness" : 0.02,
+            "absorvance" : 0.02,
+            "emittance" : 1,
+            "index_of_refraction" : "infinity"
+        },
+        { 
+            "name" : "red_wall",
+            "color" : [1, 0, 0],
+            "roughness" : 1,
+            "absorvance" : 0.6,
+            "emittance" : 0,
+            "index_of_refraction" : "infinity"
+        },
+        {
+            "name" : "blue_wall",
+            "color" : [0, 0, 1],
+            "roughness" : 1,
+            "absorvance" : 0.6,
+            "emittance" : 0,
+            "index_of_refraction" : "infinity"
+        },
+        {
+            "name" : "white_wall",
+            "color" : [1, 1, 1],
+            "roughness" : 1,
+            "absorvance" : 0.4,
+            "emittance" : 0,
+            "index_of_refraction" : "infinity"
+        }
+    ],
+
+    "lights":
+    [
+        {
+            "type" : "quad",
+            "material" : "light",
+            "A" : [343.0, 548.8, 332.0],
+            "B" : [213.0, 548.8, 332.0],
+            "C" : [343.0, 548.8, 227.0],
+            "collidable" : true
+        }
+    ],
+
+    "objects":
+    [
+        {
+            "type" : "plane",
+            "name" : "floor",
+            "material" : "white_wall",
+            "point" : [0, -300, 0],
+            "normal" : [0, 1, 0]
+        },
+        {
+            "type" : "plane",
+            "name" : "ceiling",
+            "material" : "white_wall",
+            "point" : [0, 300, 0],
+            "normal" : [0, -1, 0]
+        },
+        {
+            "type" : "plane",
+            "name" : "right",
+            "material" : "red_wall",
+            "point" : [300, 0, 0],
+            "normal" : [1, 0, 0]
+        },
+        {
+            "type" : "plane",
+            "name" : "left",
+            "material" : "blue_wall",
+            "point" : [-300, 0, 0],
+            "normal" : [-1, 0, 0]
+        },
+        {
+            "type" : "plane",
+            "name" : "back",
+            "material" : "white_wall",
+            "point" : [0, 0, -300],
+            "normal" : [0, 0, 1]
+        },
+        
+        {
+            "type" : "sphere",
+            "material" : "mirror",
+            "center" : [0, -270, -200],
+            "radius" : 30,
+            "name" : "sphere1"
+        },
+    ],
+
+    "cameras" :
+    [
+        {
+            "origin" : [0, 150, -150],
+            "direction" : [0, 0, -1],
+            "top" : [0, 1, 0],
+            "fovy" : 45,
+            "width" : 800,
+            "height" : 600,
+            "output" : "out.ppm"
+        }
+    ],
+
+    "global" :
+    {
+        "num_global_photons" : 500000,
+        "max_photon_bounce" : 20,
+        "max_tracing_depth" : 50,
+        "gathering_radius" : 8,
+        "exposure" : 0.05,
+        "eps" : 1e-10,
+        "antialias_threshold" : 0.5
+    }
+}
