@@ -15,9 +15,6 @@ struct Photon
 {
     RGB power; // power
     Ray ray;   // ray
-    bool caustics;
-
-    Photon() : caustics(false) {}
 
     // postion: for PhotonMap
     typedef double value_type;
