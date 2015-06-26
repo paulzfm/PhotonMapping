@@ -2,7 +2,9 @@
 #define UTIL_IMAGE_H_
 
 #include "RGB.h"
+
 #include <string>
+#include <memory>
 
 class Image
 {
