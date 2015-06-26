@@ -7,6 +7,7 @@
 #include "../third-party/jsonbox/JsonBox.h"
 
 #include <string>
+#include <limits>
 
 class Parser
 {
