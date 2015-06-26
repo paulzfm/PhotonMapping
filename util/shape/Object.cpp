@@ -163,3 +163,15 @@ bool Object::search(std::shared_ptr<KDTNode> node, const Ray& ray,
     return false;
 }
 
+std::shared_ptr<Shape> Object::parse(const JsonBox::Value& val, 
+    const std::string& CLS)
+{
+    Parser::checkObject(val, CLS);
+
+    JsonBox::Object obj = val.getObject();
+    Parser::checkParam(obj, CLS, "model", Parser::STRING);
+
+    return std::shared_ptr<Shape>(new Object(Parser::asString(obj["model"])));
+}
+
+

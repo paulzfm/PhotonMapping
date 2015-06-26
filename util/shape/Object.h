@@ -21,6 +21,9 @@ public:
 
     RGB colorAt(const Vector& pos) const;
 
+    static std::shared_ptr<Shape> parse(const JsonBox::Value& val, 
+        const std::string& CLS);
+
 private:
     std::vector<Triangle> _triangles;
     std::shared_ptr<KDTNode> _tree;

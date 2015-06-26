@@ -5,6 +5,7 @@
 #include "util/shape/Sphere.h"
 #include "util/shape/Triangle.h"
 #include "util/shape/DSphere.h"
+#include "util/shape/Object.h"
 #include "util/shape/PointLight.h"
 #include "util/shape/Quad.h"
 #include "util/shape/Box.h"
@@ -117,6 +118,8 @@ void RayTracer::setup(const std::string& file)
                 ptr = Sphere::parse(o, cls);
             } else if (type == "triangle") {
                 ptr = Triangle::parse(o, cls);
+            } else if (type == "object") {
+                ptr = Object::parse(o, cls);
             } else {
                 std::cerr << "Parse error: unrecognized object type \"" << type << "\".\n";
                 exit(1);
