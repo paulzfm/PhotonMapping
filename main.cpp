@@ -40,10 +40,9 @@ int main(int argc, char** argv)
 
     RayTracer tracer;
     tracer.setup("scenes/glass.json");
-    tracer.buildGlobalMap();
-    // tracer.buildCausticsMap();
-    // tracer.fastRender();
-    tracer.render();
+    tracer.buildPhotonMap();
+    tracer.fastRender();
+    // tracer.render();
     // tracer.renderMap();
     printf("\nDone.\n");
      

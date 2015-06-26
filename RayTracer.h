@@ -23,9 +23,8 @@ public:
     // setup scene & camera: call before runnning
     void setup(const std::string& file);
 
-    // build global map and caustics map: call before rendering
-    void buildGlobalMap();
-    void buildCausticsMap();
+    // build photon map: call before rendering
+    void buildPhotonMap();
     
     // render
     void render();
@@ -41,15 +40,14 @@ public:
     // cameras
     std::vector< std::unique_ptr<Camera> > _cameras;
 
-    // maps
-    std::unique_ptr<KDT> _global_map, _caustics_map;
+    // photon map
+    std::unique_ptr<KDT> _photons_map;
 
     // image size
     int _width, _height;
 
     // parameters
-    int _num_global_photons;
-    int _num_caustics_photons;
+    int _num_photons;
     int _max_photon_bounce;
     int _max_tracing_depth;
     double _gathering_radius;
@@ -64,15 +62,7 @@ public:
     RGB pixelColor(const Ray& ray, int depth = 0, double relevance = 1.0);
 
     // photon bouncing
-    void globalBounce(Photon& photon, int bounces);
-    void causticsBounce(Photon& photon, int bounces);
-
-    // store photon
-    void storePhoton(int type, const Photon& photon);
-
-    // look up photon map
-    RGB lookUpMap(int type, const Vector& center, double radius, 
-        const Vector& normal);
+    void bounce(Photon& photon, int bounces);
 
     // helper functions
     double getReflectance(const Vector &dir, const Vector &normal, double from, double to);
