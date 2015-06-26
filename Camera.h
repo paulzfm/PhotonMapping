@@ -6,6 +6,7 @@
 #include "util/Parser.h"
 
 #include <string>
+#include <memory>
 
 class Camera
 {

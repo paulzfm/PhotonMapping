@@ -11,6 +11,7 @@
 #include "../Texture.h"
 
 #include <string>
+#include <memory>
 #include <math.h>
 
 struct HitRecord

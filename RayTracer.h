@@ -8,6 +8,7 @@
 #include "util/Material.h"
 
 #include <vector>
+#include <memory>
 
 #define GLOBAL_MAP 0
 #define CAUSTICS_MAP 1
