@@ -2,12 +2,13 @@
 #define TRIANGLE_H_
 
 #include "Shape.h"
+#include "BBox.h"
 
 class Triangle : public Shape
 {
 public:
     Triangle(const Vector& v1, const Vector& v2, const Vector& v3)
-        : v1(v1), v2(v2), v3(v3) {}
+        : v1(v1), v2(v2), v3(v3), _mid((v1 + v2 + v3) / 3.0) {}
 
     static std::shared_ptr<Shape> parse(const JsonBox::Value& val,
         const std::string& CLS);
@@ -16,9 +17,14 @@ public:
 
     RGB colorAt(const Vector& pos) const;
 
+    Vector midPoint() const { return _mid; };
+
+    BBox boundingBox() const;
+
     Vector v1;
     Vector v2;
     Vector v3;
+    Vector _mid;
 };
 
 #endif // TRIANGLE_H_
