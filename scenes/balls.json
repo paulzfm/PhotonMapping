@@ -67,8 +67,7 @@
 
     "global" :
     {
-        "num_global_photons" : 500000,
-        "num_caustics_photons" : 500000,
+        "num_photons" : 500000,
         "max_photon_bounce" : 20,
         "max_tracing_depth" : 50,
         "gathering_radius" : 8,

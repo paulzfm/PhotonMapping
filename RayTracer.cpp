@@ -139,7 +139,7 @@ void RayTracer::setup(const std::string& file)
     }
 
     // initialize
-    _photons_map = std::unique_ptr<KDT>(new KDT);
+    _photons_map = std::unique_ptr<PhotonMap>(new PhotonMap);
     _env = std::unique_ptr<Material>(new Material(0, 0, 0, 1, RGB(1, 1, 1)));
 
     // summary

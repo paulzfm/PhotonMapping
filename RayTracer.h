@@ -4,7 +4,7 @@
 #include "Scene.h"
 #include "Camera.h"
 #include "util/Image.h"
-#include "util/KDT.h"
+#include "util/PhotonMap.h"
 #include "util/Material.h"
 
 #include <vector>
@@ -41,7 +41,7 @@ public:
     std::vector< std::unique_ptr<Camera> > _cameras;
 
     // photon map
-    std::unique_ptr<KDT> _photons_map;
+    std::unique_ptr<PhotonMap> _photons_map;
 
     // image size
     int _width, _height;

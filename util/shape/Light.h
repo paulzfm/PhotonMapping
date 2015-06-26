@@ -4,7 +4,7 @@
 #include "Shape.h"
 #include "../Ray.h"
 #include "../Vector.h"
-#include "../KDT.h"
+#include "../PhotonMap.h"
 
 #include <stdlib.h>
 
