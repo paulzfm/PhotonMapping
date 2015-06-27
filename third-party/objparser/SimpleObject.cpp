@@ -44,9 +44,10 @@ namespace SimpleOBJ
         {
             if(Parse(fp))
             {
-                printf("Loading from %s successfully.\n",fn);
-                printf("Vertex Number = %d\n",m_nVertices);
-                printf("Triangle Number = %d\n",m_nTriangles);
+                // printf("\tLoading from %s successfully.\n",fn);
+                // printf("\tVertex Number = %d\n",m_nVertices);
+                // printf("\tTriangle Number = %d\n",m_nTriangles);
+                printf("%d vertices and %d triangles found.\n", m_nVertices, m_nTriangles);
                 fclose(fp);
                 return true;
             }
