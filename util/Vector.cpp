@@ -7,13 +7,6 @@
 const Vector Vector::TOP = Vector(0, 1, 0);
 const Vector Vector::RIGHT = Vector(1, 0, 0);
 
-Vector::Vector(double x, double y, double z)
-{
-	this->x = x;
-	this->y = y;
-	this->z = z;
-}
-
 double Vector::length() const
 {
 	return sqrt(x * x + y * y + z * z);

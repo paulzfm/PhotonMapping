@@ -6,8 +6,8 @@
 class Vector
 {
 public:
-	Vector() {}
-	Vector(double x, double y, double z);
+	Vector(double x = 0, double y = 0, double z = 0)
+		: x(x), y(y), z(z) {}
 	
 	double length() const;     // Euclid norm: |x^2 + y^2 + z^2|
 	double square() const;     // Square of Euclid norm
