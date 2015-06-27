@@ -20,10 +20,10 @@ bool Box::hit(const Ray& ray, double time, HitRecord& record) const
     double dis;
     bool found = false;
 
-    HitRecord tmp;
     for (const auto& f : _quads) {
+        HitRecord tmp;
         if (f.hit(ray, time, tmp)) {
-            dis = (-record.t * ray.d).length();
+            dis = (-tmp.t * ray.d).length();
             if (!found || dis < min_dis) {
                 found = true;
                 min_dis = dis;
@@ -71,13 +71,8 @@ Photon Box::randomPhoton() const
 
 RGB Box::colorAt(const Vector& pos) const
 {
-    if (_texture) {
-        return RGB();
-    } else {
-        return color;
-    }
+    return color;
 }
-
 
 std::shared_ptr<Light> Box::parse(const JsonBox::Value& val,
     const std::string& CLS)

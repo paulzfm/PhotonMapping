@@ -21,6 +21,8 @@ public:
 
     BBox boundingBox() const;
 
+    friend std::ostream& operator << (std::ostream& os, const Triangle& tri);
+
     Vector v1;
     Vector v2;
     Vector v3;

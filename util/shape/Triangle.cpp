@@ -2,7 +2,6 @@
 
 bool Triangle::hit(const Ray& ray, double time, HitRecord& record) const
 {
-    double t;
     double A = v1.x - v2.x;
     double B = v1.y - v2.y;
     double C = v1.z - v2.z;
@@ -38,7 +37,7 @@ bool Triangle::hit(const Ray& ray, double time, HitRecord& record) const
         return false;
     }
 
-    t = -(F * AKJB + E * JCAL + D * BLKC) / alpha;
+    double t = -(F * AKJB + E * JCAL + D * BLKC) / alpha;
 
     // Hit! Let's record it.
     record.t = t;
@@ -48,11 +47,7 @@ bool Triangle::hit(const Ray& ray, double time, HitRecord& record) const
 
 RGB Triangle::colorAt(const Vector& pos) const
 {
-    if (_texture) {
-        return RGB();
-    } else {
-        return color;
-    }
+    return color;
 }
 
 std::shared_ptr<Shape> Triangle::parse(const JsonBox::Value& val,
@@ -74,7 +69,7 @@ std::shared_ptr<Shape> Triangle::parse(const JsonBox::Value& val,
 
 BBox Triangle::boundingBox() const
 {
-    const double eps = 0.00001;
+    const double eps = 0.0001;
     Vector min, max;
 
     min.x = MIN(v1.x, v2.x);
@@ -102,5 +97,11 @@ BBox Triangle::boundingBox() const
     max.z += eps;
 
     return BBox(min, max);
+}
+
+std::ostream& operator << (std::ostream& os, const Triangle& tri)
+{
+    os << tri.v1 << ", " << tri.v2 << ", " << tri.v3;
+    return os;
 }
 

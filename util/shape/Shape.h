@@ -10,6 +10,7 @@
 #include "../Material.h"
 #include "../Texture.h"
 
+#include <iostream>
 #include <string>
 #include <memory>
 #include <math.h>
@@ -37,6 +38,8 @@ public:
     double absorvance;
     double roughness;
     double emittance;
+
+    std::string name;
 
 protected:
     std::unique_ptr<Texture> _texture;

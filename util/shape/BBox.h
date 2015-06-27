@@ -32,6 +32,8 @@ public:
     const static int Y = 2;
     const static int Z = 3;
 
+    friend std::ostream& operator << (std::ostream& os, const BBox& bbox);
+
     Vector p[2];
 };
 
