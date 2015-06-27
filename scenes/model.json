@@ -4,35 +4,7 @@
         { "name" : "light",             "color" : [1, 1, 1],  "roughness" : 1.00,     "absorvance" : 1.00,    "emittance" : 1.0,  "index_of_refraction" : 1.492 },
 
         { "name" : "mirror",            "color" : [1, 1, 1],  "roughness" : 0.02,     "absorvance" : 0.02,    "emittance" : 0.0,  "index_of_refraction" : "infinity" },
-        {
-            "name" : "wood",
-            "color" : [1, 1, 1],
-            "roughness" : 0.9,
-            "absorvance" : 0.02,
-            "emittance" : 0,
-            "index_of_refraction" : "infinity",
-            "texture" : "textures/mudiban.ppm"
-        },
 
-        {
-            "name" : "bw",
-            "color" : [1, 1, 1],
-            "roughness" : 0.9,
-            "absorvance" : 0.02,
-            "emittance" : 0,
-            "index_of_refraction" : "infinity",
-            "texture" : "textures/blackwhite.ppm"
-        },
-
-        {
-            "name" : "stone",
-            "color" : [1, 1, 1],
-            "roughness" : 1.00,
-            "absorvance" : 0.4,
-            "emittance" : 0,
-            "index_of_refraction" : "infinity",
-            "texture" : "textures/mudiban.ppm"
-        },
 
         { "name" : "glass",         "color" : [0, 0, 1],  "roughness" : 0.02,     "absorvance" : 0.02,    "emittance" : 0.0,  "index_of_refraction" : 1.7 },
 
@@ -65,10 +37,11 @@
             "name" : "sphere1"
         },
         {
-            "type" : "sphere",
-            "material" : "wood",
-            "center" : [-15, -30.0, 20],
-            "radius" : 10,
+            "type" : "object",
+            "material" : "mirror",
+            "A" : [-25, -40.0, 10],
+            "B" : [25, 15.0, 80],
+            "model" : "objects/fandisk.18k.obj",
             "name" : "sphere2"
         },
 
