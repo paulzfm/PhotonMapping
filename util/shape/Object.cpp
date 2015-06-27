@@ -37,6 +37,7 @@ Object::Object(const std::string& file, const Vector& a, const Vector& b)
     for (int i = 0; i < _triangles.size(); ++i) {
         faces.push_back(i);
     }
+    std::cout << "--> Building kd-tree: " << file << std::endl;
     _tree = build(faces, 0);
 
     name = "object";

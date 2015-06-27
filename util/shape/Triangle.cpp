@@ -62,7 +62,7 @@ std::shared_ptr<Shape> Triangle::parse(const JsonBox::Value& val,
 
 BBox Triangle::boundingBox() const
 {
-    const double eps = 0.0001;
+    const double eps = 0.000001;
     Vector min, max;
 
     min.x = MIN(v1.x, v2.x);

@@ -47,7 +47,7 @@ namespace SimpleOBJ
                 // printf("\tLoading from %s successfully.\n",fn);
                 // printf("\tVertex Number = %d\n",m_nVertices);
                 // printf("\tTriangle Number = %d\n",m_nTriangles);
-                printf("%d vertices and %d triangles found.\n", m_nVertices, m_nTriangles);
+                printf("\t%d vertices and %d triangles found.\n", m_nVertices, m_nTriangles);
                 fclose(fp);
                 return true;
             }

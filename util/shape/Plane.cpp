@@ -20,12 +20,7 @@ bool Plane::hit(const Ray& ray, double time, HitRecord& record) const
 
 RGB Plane::colorAt(const Vector& pos) const
 {
-    if (_texture) {
-        Vector delta = pos - p;
-        return RGB();
-    } else {
-        return color;
-    }
+    return color;
 }
 
 std::shared_ptr<Shape> Plane::parse(const JsonBox::Value& val, 

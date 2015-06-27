@@ -11,6 +11,9 @@ public:
 
     RGB value(const Point& uv);
 
+    int width() const { return _img.width(); }
+    int height() const { return _img.height(); }
+
 private:
     Image _img;
 };

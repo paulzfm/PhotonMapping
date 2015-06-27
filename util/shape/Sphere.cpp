@@ -32,12 +32,21 @@ RGB Sphere::colorAt(const Vector& pos) const
         Vector n = (pos - c) / r;
 
         // calculate UV coordinates
-        double theta = acos(n.z);
-        double phi = atan2(n.y, n.x);
-        if (phi < EPS) {
-            phi += PI * 2;
+        double theta = acos(0.9999 * n.z);
+        double sin_theta = sin(theta);
+        double phi = acos(n.x / (1.0001 * sin_theta));
+        if (n.y < EPS) {
+            phi = 2 * PI - phi;
         }
-        return _texture->value(Point(phi * 0.159154943092, (PI - theta) * 0.318309886184));
+
+        Point p(phi / (2.0 * PI), 1.0 - theta / PI);
+        RGB color = _texture->value(p);
+        // if ((p.x < 0.5&&p.y < 0.5)||(p.x>0.5&&p.y>0.5))
+        //     return RGB();
+        // else
+        //     return RGB(1,1,1);
+
+        return color;
     } else {
         return color;
     }

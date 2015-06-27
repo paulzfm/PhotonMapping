@@ -17,7 +17,7 @@ TraceRecord Scene::intersect(const Ray& ray)
                 res.obj = obj;
                 res.t = record.t;
                 res.n = record.n;
-                res.v = ray.o + record.t * ray.d;
+                res.v = ray.vectorAt(res.t);
                 res.hit = true;
                 res.color = obj->colorAt(res.v);
                 max_dis = dis;
