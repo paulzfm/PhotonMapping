@@ -40,8 +40,6 @@ Object::Object(const std::string& file, const Vector& a, const Vector& b)
     _tree = build(faces, 0);
 
     name = "object";
-
-    printTree();
 }
 
 void Object::printTree()
@@ -108,29 +106,16 @@ void Object::loadObjFile(const std::string& file)
         v_max.z = MAX(v_max.z, v.z);
     }
 
-    printf("all vertices before scale:\n");
-    for (const auto& v : _vertices) {
-        std::cout << v << std::endl;
-    }
-
     // scale
     Vector v_scale = Vector(
         (_max - _min).x / (v_max - v_min).x,
         (_max - _min).y / (v_max - v_min).y,
         (_max - _min).z / (v_max - v_min).z
     );
-    std::cout << "scalev:" << v_scale << std::endl;
     double scale = MIN(v_scale.x, MIN(v_scale.y, v_scale.z));
 
-    std::cout << v_min << "VS" << _min << ":" << scale << std::endl;
     for (auto& v : _vertices) {
         v = (v - v_min) * scale + _min;
-    }
-
-    printf("all vertices after scale:\n");
-    int cnt = 0;
-    for (const auto& v : _vertices) {
-        std::cout << cnt++ << " - " << v << std::endl;
     }
 
     // load faces
@@ -138,12 +123,6 @@ void Object::loadObjFile(const std::string& file)
         SimpleOBJ::Array<int, 3> t = obj.m_pTriangleList[i];
         _triangles.push_back(Triangle(_vertices[t[0]], _vertices[t[1]],
             _vertices[t[2]]));
-    }
-
-    printf("all faces range after scale:\n");
-    cnt = 0;
-    for (const auto& t : _triangles) {
-        std::cout << cnt++ << " - " << t.boundingBox() << std::endl;
     }
 }
 
