@@ -69,13 +69,8 @@ double Quad::area() const
 
 RGB Quad::colorAt(const Vector& pos) const
 {
-    if (_texture) {
-        return RGB();
-    } else {
-        return color;
-    }
+    return color;
 }
-
 
 std::shared_ptr<Light> Quad::parse(const JsonBox::Value& val,
     const std::string& CLS)
@@ -93,3 +88,4 @@ std::shared_ptr<Light> Quad::parse(const JsonBox::Value& val,
         Parser::asVector(obj["C"])
     ));
 }
+

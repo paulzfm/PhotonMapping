@@ -67,8 +67,7 @@ bool Object::hit(const Ray& ray, double time, HitRecord& record) const
     for (const auto& f : _tree->faces) {
         HitRecord tmp;
         if (_triangles[f].hit(ray, time, tmp)) {
-            Vector v = ray.o + tmp.t * ray.d;
-            double dis = (v - ray.o).square();
+            double dis = (-tmp.t * ray.d).square();
             if (dis < max_dis) {
                 record = tmp;
                 res = true;
@@ -263,8 +262,7 @@ bool Object::search(std::shared_ptr<KDTNode> node, const Ray& ray,
             for (const auto& f : node->faces) {
                 HitRecord tmp;
                 if (_triangles[f].hit(ray, time, tmp)) {
-                    Vector v = ray.o + tmp.t * ray.d;
-                    double dis = (v - ray.o).square();
+                    double dis = (-tmp.t * ray.d).square();
                     if (dis < max_dis) {
                         record = tmp;
                         hit = true;
