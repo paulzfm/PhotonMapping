@@ -21,6 +21,8 @@ public:
     Object(const std::string& file, const Vector& a, const Vector& b);
 
     bool hit(const Ray& ray, double time, HitRecord& record) const;
+    
+    bool slowHit(const Ray& ray, double time, HitRecord& record) const;
 
     RGB colorAt(const Vector& pos) const;
 

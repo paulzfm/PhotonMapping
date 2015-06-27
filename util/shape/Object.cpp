@@ -51,17 +51,14 @@ void Object::printTree()
 
 bool Object::hit(const Ray& ray, double time, HitRecord& record) const
 {
-    // bool ret = search(_tree, ray, time, record);
-    // if (ret) {
-        // std::cout << "hit at " << record.n << std::endl;
-    // } else {
-        // std::cout << "failed!" << std::endl;
-    // }
+    return search(_tree, ray, time, record);
+    // return slowHit(ray, time, record);
+}
 
-    /* naive method */
+bool Object::slowHit(const Ray& ray, double time, HitRecord& record) const
+{
     double max_dis = std::numeric_limits<double>::max();
     bool res = false;
-    int face = -1;
 
     // hit with each face
     for (const auto& f : _tree->faces) {
@@ -71,7 +68,6 @@ bool Object::hit(const Ray& ray, double time, HitRecord& record) const
             if (dis < max_dis) {
                 record = tmp;
                 res = true;
-                face = f;
                 max_dis = dis;
             }
         }
