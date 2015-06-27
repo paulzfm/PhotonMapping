@@ -120,6 +120,8 @@ void RayTracer::setup(const std::string& file)
                 ptr = Triangle::parse(o, cls);
             } else if (type == "object") {
                 ptr = Object::parse(o, cls);
+            } else if (type == "box") {
+                ptr = Box::parse(o, cls);
             } else {
                 std::cerr << "Parse error: unrecognized object type \"" << type << "\".\n";
                 exit(1);
@@ -489,6 +491,7 @@ RGB RayTracer::pixelColor(const Ray& ray, int depth, double relevance)
 // helper functions
 // refer to:
 //     http://www.bramz.net/data/writings/reflection_transmission.pdf
+
 double RayTracer::getReflectance(const Vector &dir, const Vector &normal, 
     double from, double to)
 {
@@ -522,8 +525,6 @@ Vector RayTracer::refract(const Vector& incidence, const Vector& normal,
     double cos_i = -(normal.dot(incidence));
     double sin_t = n * n * (1.0 - cos_i * cos_i);
 
-    assert(sin_t <= 1.0);
-
     double cos_t = sqrt(1.0 - sin_t);
 
     return (incidence * n + normal * (n * cos_i - cos_t)).normalize();
@@ -533,3 +534,4 @@ Vector RayTracer::diffuse(const Vector& normal, double roughness)
 {
     return normal.noise(roughness);
 }
+

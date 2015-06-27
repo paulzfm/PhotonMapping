@@ -12,15 +12,14 @@ TraceRecord Scene::intersect(const Ray& ray)
     for (const auto& obj : objects) {
         HitRecord record;
         if (obj->hit(ray, 0, record)) {
-            Vector v = ray.o + record.t * ray.d;
-            double dis = (v - ray.o).square();
+            double dis = (-record.t * ray.d).square();
             if (dis < max_dis) {
                 res.obj = obj;
                 res.t = record.t;
                 res.n = record.n;
-                res.v = v;
+                res.v = ray.o + record.t * ray.d;
                 res.hit = true;
-                res.color = obj->colorAt(v);
+                res.color = obj->colorAt(res.v);
                 max_dis = dis;
             }
         }
