@@ -4,6 +4,17 @@
 #include "Shape.h"
 #include "BBox.h"
 
+/* A triangle defined as
+
+         v2
+        / \           
+       /   \         
+      /     \       
+     /       \     
+    v1-------v3
+
+ */
+
 class Triangle : public Shape
 {
 public:

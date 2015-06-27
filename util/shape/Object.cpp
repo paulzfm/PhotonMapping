@@ -272,9 +272,6 @@ bool Object::search(std::shared_ptr<KDTNode> node, const Ray& ray,
                 }
             }
 
-// if (hit) {
-    // std::cout << "hit face " << face << " with " << record.n << std::endl;
-// }
             return hit;
         }
     }

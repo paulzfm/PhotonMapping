@@ -1,47 +1,40 @@
 #include "Triangle.h"
+#include "../common.h"
 
+// Möller–Trumbore intersection algorithm
+// refer to:
+//     https://en.wikipedia.org/wiki/Möller–Trumbore_intersection_algorithm
 bool Triangle::hit(const Ray& ray, double time, HitRecord& record) const
 {
-    double A = v1.x - v2.x;
-    double B = v1.y - v2.y;
-    double C = v1.z - v2.z;
+    Vector e1 = v2 - v1;
+    Vector e2 = v3 - v1;
+    Vector p = ray.d.cross(e2);
+    
+    double det = e1.dot(p);
+    if (det > -EPS && det < EPS) {
+        return false;
+    }
+    double inv_det = 1.0 / det;
 
-    double D = v1.x - v3.x;
-    double E = v1.y - v3.y;
-    double F = v1.z - v3.z;
-
-    double G = ray.d.x;
-    double H = ray.d.y;
-    double I = ray.d.z;
-
-    double J = v1.x - ray.o.x;
-    double K = v1.y - ray.o.y;
-    double L = v1.z - ray.o.z;
-
-    double EIHF = E * I - H * F;
-    double GFDI = G * F - D * I;
-    double DHEG = D * H - E * G;
-    double alpha = (A * EIHF + B * GFDI + C * DHEG);
-    double beta = (J * EIHF + K * GFDI + L * DHEG) / alpha;
-
-    if (beta <= 0.0 || beta >= 1.0) {
+    Vector t = ray.o - v1;
+    double u = t.dot(p) * inv_det;
+    if (u < 0.0 || u > 1.0) {
         return false;
     }
 
-    double AKJB = A * K - J * B;
-    double JCAL = J * C - A * L;
-    double BLKC = B * L - K * C;
-    double gamma = (I * AKJB + H * JCAL + G * BLKC) / alpha;
-
-    if (gamma <= 0.0 || beta + gamma >= 1.0) {
+    Vector q = t.cross(e1);
+    double v = ray.d.dot(q) * inv_det;
+    if (v < 0.0 || v > 1.0 || u + v > 1.0) {
         return false;
     }
 
-    double t = -(F * AKJB + E * JCAL + D * BLKC) / alpha;
+    record.t = e2.dot(q) * inv_det;
+    if (record.t < EPS) {
+        return false;
+    }
 
-    // Hit! Let's record it.
-    record.t = t;
-    record.n = (v2 - v1).cross(v3 - v1).normalize();
+    // Hit!
+    record.n = e1.cross(e2).normalize();
     return true;
 }
 
