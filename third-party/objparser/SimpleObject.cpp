@@ -1,6 +1,9 @@
 // #include "StdAfx.h"
 #include "SimpleObject.h"
 #include <vector>
+#include <stdio.h>
+#include <stdlib.h>
+#include <iostream>
 
 using namespace std;
 

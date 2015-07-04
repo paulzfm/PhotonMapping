@@ -11,8 +11,9 @@
 #include "util/Sample.h"
 #include "util/Image.h"
 
-#include <string>
 #include <stdio.h>
+#include <string.h>
+#include <string>
 
 // int test()
 // {
