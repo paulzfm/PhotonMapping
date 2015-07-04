@@ -19,8 +19,7 @@
             "material" : "light",
             "A" : [10, 40, 15],
             "B" : [-10, 40, 15],
-            "C" : [10, 40, 5],
-            "name" : "ceilingarealight"
+            "C" : [10, 40, 5]
         }
     ],
 
@@ -34,10 +33,11 @@
             "name" : "sphere1"
         },
         {
-            "type" : "sphere",
+            "type" : "object",
             "material" : "mirror",
-            "center" : [-15, -30.0, 20],
-            "radius" : 10,
+            "A" : [-25, -40.0, 10],
+            "B" : [-5, -20.0, 30],
+            "model" : "objects/cube.obj",
             "name" : "sphere2"
         },
 
@@ -58,7 +58,7 @@
             "fovy" : 40.0,
             "width" : 400,
             "height" : 400,
-            "output" : "outputs/balls"
+            "output" : "outputs/box_model"
         }
     ],
 

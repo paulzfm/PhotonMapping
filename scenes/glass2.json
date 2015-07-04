@@ -6,14 +6,9 @@
 		{ "name" : "glass",			"color" : [1, 1, 1],	"roughness" : 0.05,		"absorvance" : 0.02,	"emittance" : 0.0,	"index_of_refraction" : 1.492 },
 		{ "name" : "mirror",		"color" : [1, 1, 1],	"roughness" : 0.02,		"absorvance" : 0.02,	"emittance" : 0.0,	"index_of_refraction" : "infinity" },
 
-		{ "name" : "redglass",		"color" : [1, 0, 0],		"roughness" : 0.05,		"absorvance" : 0.02,	"emittance" : 0.0,	"index_of_refraction" : 1.492 },
-		{ "name" : "greenglass",	"color" : [0, 1, 0],		"roughness" : 0.05,		"absorvance" : 0.02,	"emittance" : 0.0,	"index_of_refraction" : 1.492 },
-		{ "name" : "blueglass",		"color" : [0, 0, 1],		"roughness" : 0.05,		"absorvance" : 0.02,	"emittance" : 0.0,	"index_of_refraction" : 1.492 },
-		{ "name" : "blackglass",	"color" : [0, 0, 0],		"roughness" : 0.05,		"absorvance" : 0.02,	"emittance" : 0.0,	"index_of_refraction" : 1.492 },
-
 		{ "name" : "grayconcrete",	"color" : [0.65, 0.65, 0.65],	"roughness" : 1.00,		"absorvance" : 0.40,	"emittance" : 0.0,	"index_of_refraction" : "infinity" },
-		{ "name" : "blackconcrete",	"color" : [0, 0, 0],		"roughness" : 1.00,		"absorvance" : 0.80,	"emittance" : 0.0,	"index_of_refraction" : "infinity" },
-		{ "name" : "whiteconcrete",	"color" : [1, 1, 1],	"roughness" : 1.00,		"absorvance" : 0.40,	"emittance" : 0.0,	"index_of_refraction" : "infinity" },
+		{ "name" : "blackconcrete",	"color" : [0, 0, 0],			"roughness" : 1.00,		"absorvance" : 0.80,	"emittance" : 0.0,	"index_of_refraction" : "infinity" },
+		{ "name" : "whiteconcrete",	"color" : [1, 1, 1],			"roughness" : 1.00,		"absorvance" : 0.40,	"emittance" : 0.0,	"index_of_refraction" : "infinity" },
 
 		{ "name" : "redconcrete",	"color" : [1, 0, 0],		"roughness" : 1.00,		"absorvance" : 0.60,	"emittance" : 0.0,	"index_of_refraction" : "infinity" },
 		{ "name" : "greenconcrete",	"color" : [0, 1, 0],		"roughness" : 1.00,		"absorvance" : 0.60,	"emittance" : 0.0,	"index_of_refraction" : "infinity" },

@@ -19,8 +19,7 @@
             "material" : "light",
             "A" : [10, 40, 15],
             "B" : [-10, 40, 15],
-            "C" : [10, 40, 5],
-            "name" : "ceilingarealight"
+            "C" : [10, 40, 5]
         }
     ],
 
@@ -34,10 +33,11 @@
             "name" : "sphere1"
         },
         {
-            "type" : "sphere",
+            "type" : "object",
             "material" : "mirror",
-            "center" : [-15, -30.0, 20],
-            "radius" : 10,
+            "A" : [-25, -40.0, 10],
+            "B" : [-5, -20.0, 30],
+            "model" : "objects/sphere.obj",
             "name" : "sphere2"
         },
 
@@ -45,8 +45,7 @@
         { "type" : "plane", "material" : "white_concrete",  "point" : [0.0, 40.0, 0.0],     "normal" : [0.0, -1.0, 0.0],    "name" : "ceilingPlane" },
         { "type" : "plane", "material" : "red_concrete",    "point" : [-40.0, 0.0, 0.0],    "normal" : [1.0, 0.0, 0.0],     "name" : "leftPlane" },
         { "type" : "plane", "material" : "green_concrete",  "point" : [40.0, 0.0, 0.0],     "normal" : [-1.0, 0.0, 0.0],    "name" : "rightPlane" },
-        { "type" : "plane", "material" : "white_concrete",  "point" : [0.0, 0.0, 40],       "normal" : [0.0, 0.0, -1.0],    "name" : "frontPlane" },
-        { "type" : "plane", "material" : "black_concrete",  "point" : [0.0, 0.0, -80],      "normal" : [0.0, 0.0, 1.0],     "name" : "backPlane" }
+        { "type" : "plane", "material" : "white_concrete",  "point" : [0.0, 0.0, 40],       "normal" : [0.0, 0.0, -1.0],    "name" : "frontPlane" }
     ],
 
     "cameras" :
@@ -58,7 +57,7 @@
             "fovy" : 40.0,
             "width" : 400,
             "height" : 400,
-            "output" : "outputs/balls"
+            "output" : "outputs/sphere_model_slow"
         }
     ],
 

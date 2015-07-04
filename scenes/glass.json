@@ -58,10 +58,37 @@
 			"origin" : [0, 1, -40.0],
 			"direction" : [0, 0, 1],
 			"top" : [0, 1, 0],
-			"fovy" : 43.0,
+			"fovy" : 50.0,
+			"width" : 800,
+			"height" : 600,
+			"output" : "outputs/two_balls_1"
+		},
+		{
+			"origin" : [0, 1, -40.0],
+			"direction" : [0, 0, 1],
+			"top" : [0, 1, 0],
+			"fovy" : 48.0,
+			"width" : 800,
+			"height" : 600,
+			"output" : "outputs/two_balls_2"
+		},
+		{
+			"origin" : [0, 1, -40.0],
+			"direction" : [0, 0, 1],
+			"top" : [0, 1, 0],
+			"fovy" : 46.0,
 			"width" : 800,
 			"height" : 600,
 			"output" : "outputs/two_balls_3"
+		},
+		{
+			"origin" : [0, 1, -40.0],
+			"direction" : [0, 0, 1],
+			"top" : [0, 1, 0],
+			"fovy" : 45.0,
+			"width" : 800,
+			"height" : 600,
+			"output" : "outputs/two_balls_4"
 		}
 	],
 

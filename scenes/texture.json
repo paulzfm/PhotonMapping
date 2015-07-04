@@ -4,42 +4,21 @@
         { "name" : "light",             "color" : [1, 1, 1],  "roughness" : 1.00,     "absorvance" : 1.00,    "emittance" : 1.0,  "index_of_refraction" : 1.492 },
 
         { "name" : "mirror",            "color" : [1, 1, 1],  "roughness" : 0.02,     "absorvance" : 0.02,    "emittance" : 0.0,  "index_of_refraction" : "infinity" },
-        {
-            "name" : "wood",
-            "color" : [1, 1, 1],
-            "roughness" : 0.9,
-            "absorvance" : 0.02,
-            "emittance" : 0,
-            "index_of_refraction" : "infinity",
-            "texture" : "textures/mudiban.ppm"
-        },
 
         {
-            "name" : "bw",
-            "color" : [1, 1, 1],
-            "roughness" : 0.9,
-            "absorvance" : 0.02,
-            "emittance" : 0,
-            "index_of_refraction" : "infinity",
-            "texture" : "textures/blackwhite.ppm"
-        },
-
-        {
-            "name" : "stone",
+            "name" : "texture",
             "color" : [1, 1, 1],
             "roughness" : 1.00,
             "absorvance" : 0.4,
-            "emittance" : 0,
+            "emittance" : 0.9,
             "index_of_refraction" : "infinity",
-            "texture" : "textures/mudiban.ppm"
+            "texture" : "texture/tex.ppm"
         },
 
-        { "name" : "glass",         "color" : [0, 0, 1],  "roughness" : 0.02,     "absorvance" : 0.02,    "emittance" : 0.0,  "index_of_refraction" : 1.7 },
-
-        { "name" : "white_concrete",    "color" : [1, 1, 1],  "roughness" : 1.00,     "absorvance" : 0.40,    "emittance" : 0.0,  "index_of_refraction" : "infinity" },
-        { "name" : "red_concrete",      "color" : [1, 0, 0],      "roughness" : 1.00,     "absorvance" : 0.60,    "emittance" : 0.0,  "index_of_refraction" : "infinity" },
-        { "name" : "green_concrete",    "color" : [0, 1, 0],      "roughness" : 1.00,     "absorvance" : 0.60,    "emittance" : 0.0,  "index_of_refraction" : "infinity" },
-        { "name" : "black_concrete",    "color" : [0.7843137254901961, 0.7843137254901961, 0.7843137254901961],  "roughness" : 1.00,     "absorvance" : 0.40,    "emittance" : 0.0,  "index_of_refraction" : "infinity" },
+        { "name" : "white_concrete",    "color" : [1, 1, 1],            "roughness" : 1.00,     "absorvance" : 0.40,    "emittance" : 0.0,  "index_of_refraction" : "infinity" },
+        { "name" : "red_concrete",      "color" : [1, 0, 0],            "roughness" : 1.00,     "absorvance" : 0.60,    "emittance" : 0.0,  "index_of_refraction" : "infinity" },
+        { "name" : "green_concrete",    "color" : [0, 1, 0],            "roughness" : 1.00,     "absorvance" : 0.60,    "emittance" : 0.0,  "index_of_refraction" : "infinity" },
+        { "name" : "black_concrete",    "color" : [0.78, 0.78, 0.78],   "roughness" : 1.00,     "absorvance" : 0.40,    "emittance" : 0.0,  "index_of_refraction" : "infinity" },
     ],
 
     "lights" :
@@ -49,9 +28,7 @@
             "material" : "light",
             "A" : [10, 40, 15],
             "B" : [-10, 40, 15],
-            "C" : [10, 40, 5],
-            "collidable" : true,
-            "name" : "ceilingarealight"
+            "C" : [10, 40, 5]
         }
     ],
 
@@ -66,18 +43,18 @@
         },
         {
             "type" : "sphere",
-            "material" : "wood",
+            "material" : "texture",
             "center" : [-15, -30.0, 20],
             "radius" : 10,
             "name" : "sphere2"
         },
 
         { "type" : "plane", "material" : "white_concrete",  "point" : [0.0, -40.0, 0.0],    "normal" : [0.0, 1.0, 0.0],     "name" : "floorPlane" },
-            { "type" : "plane", "material" : "white_concrete",  "point" : [0.0, 40.0, 0.0],     "normal" : [0.0, -1.0, 0.0],    "name" : "ceilingPlane" },
-            { "type" : "plane", "material" : "red_concrete",    "point" : [-40.0, 0.0, 0.0],    "normal" : [1.0, 0.0, 0.0],     "name" : "leftPlane" },
-            { "type" : "plane", "material" : "green_concrete",  "point" : [40.0, 0.0, 0.0],     "normal" : [-1.0, 0.0, 0.0],    "name" : "rightPlane" },
-            { "type" : "plane", "material" : "white_concrete",  "point" : [0.0, 0.0, 40],       "normal" : [0.0, 0.0, -1.0],    "name" : "frontPlane" },
-            { "type" : "plane", "material" : "black_concrete",  "point" : [0.0, 0.0, -80],      "normal" : [0.0, 0.0, 1.0],     "name" : "backPlane" }
+        { "type" : "plane", "material" : "white_concrete",  "point" : [0.0, 40.0, 0.0],     "normal" : [0.0, -1.0, 0.0],    "name" : "ceilingPlane" },
+        { "type" : "plane", "material" : "red_concrete",    "point" : [-40.0, 0.0, 0.0],    "normal" : [1.0, 0.0, 0.0],     "name" : "leftPlane" },
+        { "type" : "plane", "material" : "green_concrete",  "point" : [40.0, 0.0, 0.0],     "normal" : [-1.0, 0.0, 0.0],    "name" : "rightPlane" },
+        { "type" : "plane", "material" : "white_concrete",  "point" : [0.0, 0.0, 40],       "normal" : [0.0, 0.0, -1.0],    "name" : "frontPlane" },
+        { "type" : "plane", "material" : "black_concrete",  "point" : [0.0, 0.0, -80],      "normal" : [0.0, 0.0, 1.0],     "name" : "backPlane" }
     ],
 
     "cameras" :
@@ -89,7 +66,7 @@
             "fovy" : 40.0,
             "width" : 400,
             "height" : 400,
-            "output" : "out.ppm"
+            "output" : "outputs/texture"
         }
     ],
 
@@ -99,8 +76,6 @@
         "max_photon_bounce" : 20,
         "max_tracing_depth" : 50,
         "gathering_radius" : 8,
-        "exposure" : 0.03,
-        "eps" : 1e-10,
-        "antialias_threshold" : 0.5
+        "exposure" : 0.03
     }
 }
