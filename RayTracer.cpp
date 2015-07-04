@@ -419,8 +419,13 @@ void RayTracer::render()
             }
         }
         std::cout << std::endl;
+        img.dumpPPM(c->output + ".ppm");
 
-        img.dumpPPM("test.ppm");
+        std::cout << "--> Transfering: " << c->output << ".ppm" << " -> " << c->output << 
+            ".jpeg" << std::endl;
+        char cmd[255];
+        sprintf(cmd, "ppmtojpeg %s.ppm > %s.jpeg", c->output.c_str(), c->output.c_str());
+        system(cmd);
     }
 }
 
