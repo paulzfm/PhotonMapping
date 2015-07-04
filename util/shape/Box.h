@@ -1,8 +1,8 @@
-#ifndef UTIL_LIGHT_BOX
-#define UTIL_LIGHT_BOX
+#ifndef UTIL_BOX_H_
+#define UTIL_BOX_H_
 
-#include "Light.h"
 #include "Quad.h"
+#include "Shape.h"
 
 /* A box defined as
 
@@ -26,19 +26,15 @@
     C = S + c
 */
 
-class Box : public Light
+class Box : public Shape
 {
 public:
     Box(const Vector& s, const Vector& a, const Vector& b, const Vector& c);
 
-    static std::shared_ptr<Light> parse(const JsonBox::Value& val, 
+    static std::shared_ptr<Shape> parse(const JsonBox::Value& val, 
         const std::string& CLS);
 
     bool hit(const Ray& ray, double time, HitRecord& record) const;
-
-    Photon randomPhoton() const;
-
-    double area() const;
 
     RGB colorAt(const Vector& pos) const;
 
@@ -48,7 +44,6 @@ public:
 private:
     Vector _a, _b, _c;
     std::vector<Quad> _quads; // 6 faces
-    double _area;
 };
 
-#endif
+#endif // UTIL_BOX_H_

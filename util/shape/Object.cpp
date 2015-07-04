@@ -40,7 +40,7 @@ Object::Object(const std::string& file, const Vector& a, const Vector& b)
     std::cout << "--> Building kd-tree: " << file << std::endl;
     _tree = build(faces, 0);
 
-    printTree();
+    // printTree();
 }
 
 void Object::printTree()
