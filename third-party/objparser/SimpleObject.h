@@ -1,6 +1,7 @@
 #pragma once
 #include "Vec3f.h"
 #include <vector>
+#include <stdlib.h>
 
 namespace SimpleOBJ
 {
