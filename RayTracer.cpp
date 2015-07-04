@@ -58,8 +58,6 @@ void RayTracer::setup(const std::string& file)
                 ptr = PointLight::parse(l, cls);
             } else if (type == "quad") {
                 ptr = Quad::parse(l, cls);
-            } else if (type == "box") {
-                ptr = Box::parse(l, cls);
             } else {
                 std::cerr << "Parse error: unrecognized light type \"" << type << "\".\n";
                 exit(1);

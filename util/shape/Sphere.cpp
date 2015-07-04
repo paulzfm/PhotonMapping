@@ -40,13 +40,7 @@ RGB Sphere::colorAt(const Vector& pos) const
         }
 
         Point p(phi / (2.0 * PI), 1.0 - theta / PI);
-        RGB color = _texture->value(p);
-        // if ((p.x < 0.5&&p.y < 0.5)||(p.x>0.5&&p.y>0.5))
-        //     return RGB();
-        // else
-        //     return RGB(1,1,1);
-
-        return color;
+        return _texture->value(p);
     } else {
         return color;
     }
