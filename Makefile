@@ -15,4 +15,4 @@ $(TARGET): $(OBJECTS)
 	$(CXX) -c $(CFLAGS) $< -o $@
 	
 clean:
-	rm -rf *.o *~ $(TARGET) util/*.o util/*~ util/shape/*.o util/shape/*~ third-party/*.o third-party/*~ third-party/jsonbox/*~ third-party/jsonbox/*.o
+	rm -rf *.o *~ $(TARGET) util/*.o util/*~ util/shape/*.o util/shape/*~ third-party/*.o third-party/*~ third-party/jsonbox/*~ third-party/jsonbox/*.o third-party/objparser/*~ third-party/objparser/*.o

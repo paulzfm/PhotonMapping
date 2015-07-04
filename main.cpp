@@ -1,15 +1,5 @@
 #include "Scene.h"
 #include "RayTracer.h"
-#include "util/Image.h"
-#include "util/shape/Sphere.h"
-#include "util/shape/Plane.h"
-#include "util/shape/Triangle.h"
-#include "util/shape/BBox.h"
-#include "util/shape/Box.h"
-
-#include "util/Vector.h"
-#include "util/Sample.h"
-#include "util/Image.h"
 
 #include <stdio.h>
 #include <string.h>
