@@ -4,38 +4,76 @@
 #include "util/shape/Sphere.h"
 #include "util/shape/Plane.h"
 #include "util/shape/Triangle.h"
+#include "util/shape/BBox.h"
+#include "util/shape/Box.h"
 
 #include "util/Vector.h"
 #include "util/Sample.h"
 #include "util/Image.h"
 
-int test()
+#include <string>
+#include <stdio.h>
+
+// int test()
+// {
+//     BBox bbox(Vector(0,0,0), Vector(2,2,2));
+//     Box box(Vector(0,0,0), Vector(0,2,0), Vector(0,0,2), Vector(2,0,0));
+//     Ray ray(Vector(1,3,1), Vector(0,-1,0));
+//     if (bbox.shadowHit(ray)) {
+//         printf("HIT\n");
+//     } else {
+//         printf("MISS\n");
+//     }
+
+//     HitRecord rec;
+//     if (box.hit(ray, 0, rec)) {
+//         printf("HIT\n");
+//     } else {
+//         printf("MISS\n");
+//     }
+
+//     return 0;
+// }
+
+void run(const std::string& file, int samples)
 {
-    Triangle t(Vector(0,0,0), Vector(1,0,0), Vector(1,0,1));
-    Ray r(Vector(0.5, 0.5, 0.5), Vector(0.1,1,0.1));
-    HitRecord rec;
-    if (t.hit(r, 0, rec)) {
-        std::cout << rec.n << " " << r.o + rec.t * r.d << std::endl;
+    RayTracer tracer;
+    tracer.setup(file);
+    tracer.buildPhotonMap();
+
+    if (samples == 0) {
+        tracer.fastRender();
     } else {
-        printf("MISS\n");
+        tracer.render();
     }
 
-    return 0;
+    printf("--> All done\n");
 }
 
 int main(int argc, char** argv)
 {
-    // return test();
+    if (argc != 2 && argc != 4) {
+        fprintf(stderr, "Usage: %s <scene file> [-s samples]\n", argv[0]);
+        exit(1);
+    }
+    
+    std::string file(argv[1]);
 
-    RayTracer tracer;
-    tracer.setup("scenes/model.json");
-    // tracer.setup("scenes/box.json");
-    tracer.buildPhotonMap();
-    tracer.fastRender();
-    // tracer.render();
-    // tracer.renderMap();
-    printf("\nDone.\n");
-     
+    int samples = 0;
+    if (argc == 4) {
+        if (strcmp(argv[2], "-s") != 0) {
+            fprintf(stderr, "Arg error: invalid option \"%s\", \"-s\" expected.\n", argv[2]);
+            exit(1);
+        } else {
+            samples = atoi(argv[3]);
+            if (samples <= 0) {
+                fprintf(stderr, "Arg warning: fast render will be applied for option: \"-s %d\"\n", samples);
+            }
+        }
+    }
+
+    run(file, samples);
+
     return 0;
 }
 

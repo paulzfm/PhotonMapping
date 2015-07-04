@@ -4,12 +4,10 @@
 #include "util/shape/Plane.h"
 #include "util/shape/Sphere.h"
 #include "util/shape/Triangle.h"
-#include "util/shape/DSphere.h"
 #include "util/shape/Object.h"
 #include "util/shape/PointLight.h"
 #include "util/shape/Quad.h"
 #include "util/shape/Box.h"
-#include "util/Sample.h"
 
 #include <stdlib.h>
 #include <omp.h>
@@ -373,8 +371,13 @@ void RayTracer::fastRender()
             }
         }
         std::cout << std::endl;
+        img.dumpPPM(c->output + ".ppm");
 
-        img.dumpPPM("test.ppm");
+        std::cout << "--> Transfering: " << c->output << ".ppm" << " -> " << c->output << 
+            ".jpeg" << std::endl;
+        char cmd[255];
+        sprintf(cmd, "ppmtojpeg %s.ppm > %s.jpeg", c->output.c_str(), c->output.c_str());
+        system(cmd);
     }
 }
 
