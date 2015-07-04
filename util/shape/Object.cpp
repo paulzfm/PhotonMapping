@@ -3,6 +3,7 @@
 
 #include <limits>
 #include <assert.h>
+#include <stdlib.h>
 
 std::ostream& operator << (std::ostream& os, std::shared_ptr<KDTNode> node)
 {
@@ -85,7 +86,10 @@ void Object::loadObjFile(const std::string& file)
     std::cout << "--> Loading object: " << file << "\n";
 
     SimpleOBJ::CSimpleObject obj;
-    obj.LoadFromObj(file.c_str());
+    if (!obj.LoadFromObj(file.c_str())) {
+        exit(1);
+    }
+
     Vector v_min(std::numeric_limits<double>::max(),
                  std::numeric_limits<double>::max(),
                  std::numeric_limits<double>::max());
