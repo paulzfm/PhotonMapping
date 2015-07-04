@@ -7,7 +7,7 @@
 std::ostream& operator << (std::ostream& os, std::shared_ptr<KDTNode> node)
 {
     os << node->bbox << " ";
-    for (const auto f : node->faces) {
+    for (const auto& f : node->faces) {
         os << f << " ";
     }
 
@@ -40,7 +40,7 @@ Object::Object(const std::string& file, const Vector& a, const Vector& b)
     std::cout << "--> Building kd-tree: " << file << std::endl;
     _tree = build(faces, 0);
 
-    name = "object";
+    printTree();
 }
 
 void Object::printTree()
@@ -232,7 +232,6 @@ bool Object::search(std::shared_ptr<KDTNode> node, const Ray& ray,
         } else { // leaf node
             double max_dis = std::numeric_limits<double>::max();
             bool hit = false;
-            int face = -1;
 
             // hit with each face
             for (const auto& f : node->faces) {
@@ -242,7 +241,6 @@ bool Object::search(std::shared_ptr<KDTNode> node, const Ray& ray,
                     if (dis < max_dis) {
                         record = tmp;
                         hit = true;
-                        face = f;
                         max_dis = dis;
                     }
                 }

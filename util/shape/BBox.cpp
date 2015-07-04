@@ -1,35 +1,36 @@
 #include "BBox.h"
 
 #include <limits>
+#include <assert.h>
 
+// We refer to an efficient and robust algorithm to adapt to special 
+// cases described in the following paper:
+//    Amy Williams, Steve Barrus, R. Keith Morley, and Peter Shirley
+//    "An Efficient and Robust Ray-Box Intersection Algorithm"
+//    Journal of graphics tools, 10(1):49-54, 2005
+// Here is the pdf format paper:
+//    http://www.cs.utah.edu/~awilliam/box/box.pdf
 bool BBox::shadowHit(const Ray& ray) const
 {
-    int posneg[3];
-    posneg[0] = (ray.d.x > 0 ? 0 : 1);
-    posneg[1] = (ray.d.y > 0 ? 0 : 1);
-    posneg[2] = (ray.d.z > 0 ? 0 : 1);
-    Vector inv(1.0 / ray.d.x, 1.0 / ray.d.y, 1.0 / ray.d.z);
+    Vector inv_direction = Vector(1.0 / ray.d.x, 1.0 / ray.d.y, 1.0 / ray.d.z);
+    int sign[3];
+    sign[0] = (inv_direction.x < 0);
+    sign[1] = (inv_direction.y < 0);
+    sign[2] = (inv_direction.z < 0);
 
-    double interval_min = -std::numeric_limits<double>::max();
-    double interval_max =  std::numeric_limits<double>::max();
-
-    double t0 = (p[posneg[0]].x - ray.o.x) * inv.x;
-    double t1 = (p[1 - posneg[0]].x - ray.o.x) * inv.x;
-    if (t0 > interval_min) interval_min = t0;
-    if (t1 < interval_max) interval_max = t1;
-    if (interval_min > interval_max) return false;
-
-    t0 = (p[posneg[1]].y - ray.o.y) * inv.y;
-    t1 = (p[1 - posneg[1]].y - ray.o.y) * inv.y;
-    if (t0 > interval_min) interval_min = t0;
-    if (t1 < interval_max) interval_max = t1;
-    if (interval_min > interval_max) return false;
-
-    t0 = (p[posneg[2]].z - ray.o.z) * inv.z;
-    t1 = (p[1 - posneg[2]].z - ray.o.z) * inv.z;
-    if (t0 > interval_min) interval_min = t0;
-    if (t1 < interval_max) interval_max = t1;
-    return (interval_min <= interval_max);
+    double tmin = (p[sign[0]].x - ray.o.x) * inv_direction.x;
+    double tmax = (p[1 - sign[0]].x - ray.o.x) * inv_direction.x;
+    double tymin = (p[sign[1]].y - ray.o.y) * inv_direction.y;
+    double tymax = (p[1 - sign[1]].y - ray.o.y) * inv_direction.y;
+    if ((tmin > tymax) || (tymin > tmax)) return false;
+    if (tymin > tmin) tmin = tymin;
+    if (tymax < tmax) tmax = tymax;
+    double tzmin = (p[sign[2]].z - ray.o.z) * inv_direction.z;
+    double tzmax = (p[1 - sign[2]].z - ray.o.z) * inv_direction.z;
+    if ((tmin > tzmax) || (tzmin > tmax)) return false;
+    if (tzmin > tmin) tmin = tzmin;
+    if (tzmax < tmax) tmax = tzmax;
+    return true;
 }
 
 bool BBox::hit(const Ray& ray, double time, HitRecord& record) const

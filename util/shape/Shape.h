@@ -32,14 +32,10 @@ public:
 
     // params
     RGB color;
-
-    double index_of_refraction; // index of refraction
-    // double specular_power;  // specular power: (R.V)^n
+    double index_of_refraction;
     double absorvance;
     double roughness;
     double emittance;
-
-    std::string name;
 
 protected:
     std::unique_ptr<Texture> _texture;

@@ -2,6 +2,7 @@
 #define UTIL_SHAPE_BBOX
 
 #include "Shape.h"
+#include "Box.h"
 
 class BBox : public Shape
 {
@@ -13,7 +14,7 @@ public:
         p[1] = b;
     }
 
-    // no records will be returned: do NOT use this
+    // no records will be returned: DO NOT use this
     bool hit(const Ray& ray, double time, HitRecord& record) const;
 
     // use this to test intersection

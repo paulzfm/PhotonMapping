@@ -62,24 +62,16 @@ std::shared_ptr<Shape> Triangle::parse(const JsonBox::Value& val,
 
 BBox Triangle::boundingBox() const
 {
-    const double eps = 0.000001;
+    const double eps = 0.00001;
     Vector min, max;
 
-    min.x = MIN(v1.x, v2.x);
-    min.y = MIN(v1.y, v2.y);
-    min.z = MIN(v1.z, v2.z);
+    min.x = MIN(MIN(v1.x, v2.x), v3.x);
+    min.y = MIN(MIN(v1.y, v2.y), v3.y);
+    min.z = MIN(MIN(v1.z, v2.z), v3.z);
 
-    min.x = MIN(v3.x, min.x);
-    min.y = MIN(v3.y, min.y);
-    min.z = MIN(v3.z, min.z);
-
-    max.x = MAX(v1.x, v2.x);
-    max.y = MAX(v1.y, v2.y);
-    max.z = MAX(v1.z, v2.z);
-
-    max.x = MAX(v3.x, max.x);
-    max.y = MAX(v3.y, max.y);
-    max.z = MAX(v3.z, max.z);
+    max.x = MAX(MAX(v1.x, v2.x), v3.x);
+    max.y = MAX(MAX(v1.y, v2.y), v3.y);
+    max.z = MAX(MAX(v1.z, v2.z), v3.z);
 
     min.x -= eps;
     min.y -= eps;
