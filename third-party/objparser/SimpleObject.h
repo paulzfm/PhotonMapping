@@ -2,6 +2,8 @@
 #include "Vec3f.h"
 #include <vector>
 #include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 
 namespace SimpleOBJ
 {
