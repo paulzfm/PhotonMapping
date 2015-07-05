@@ -20,7 +20,7 @@ and everything is done.
 
 Syntax for scene file is rather straightforward, see `scenes/` for some examples.
 
-Here, `samples` means how many samples do you want for each pixel, should be a squared positive integer.
+Here, `samples` means how many samples do you want for each pixel, should be a squared positive integer. Fast render will be applied if this option is not specified.
 
 ## Documentation
 
