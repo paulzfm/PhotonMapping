@@ -5,27 +5,6 @@
 #include <string.h>
 #include <string>
 
-// int test()
-// {
-//     BBox bbox(Vector(0,0,0), Vector(2,2,2));
-//     Box box(Vector(0,0,0), Vector(0,2,0), Vector(0,0,2), Vector(2,0,0));
-//     Ray ray(Vector(1,3,1), Vector(0,-1,0));
-//     if (bbox.shadowHit(ray)) {
-//         printf("HIT\n");
-//     } else {
-//         printf("MISS\n");
-//     }
-
-//     HitRecord rec;
-//     if (box.hit(ray, 0, rec)) {
-//         printf("HIT\n");
-//     } else {
-//         printf("MISS\n");
-//     }
-
-//     return 0;
-// }
-
 void run(const std::string& file, int samples)
 {
     RayTracer tracer;
@@ -35,7 +14,7 @@ void run(const std::string& file, int samples)
     if (samples == 0) {
         tracer.fastRender();
     } else {
-        tracer.render();
+        tracer.render(samples);
     }
 
     printf("--> All done\n");

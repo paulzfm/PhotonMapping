@@ -27,12 +27,13 @@ public:
     void buildPhotonMap();
     
     // render
-    void render();
+    void render(int n_sample);
     void fastRender();
-    void renderMap();
-    void renderMap2();
+    
+    void renderMap(); // debug
+    void renderMap2(); // debug
 
-// private:
+private:
     std::unique_ptr<Scene> _scene;
     std::unique_ptr<Image> _img;
     std::unique_ptr<Material> _env;
@@ -52,8 +53,6 @@ public:
     int _max_tracing_depth;
     double _gathering_radius;
     double _exposure;
-
-    int _samples_per_pixel;
 
     // parse parameters
     void parseParams(const JsonBox::Value& val);

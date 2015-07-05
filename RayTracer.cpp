@@ -154,9 +154,6 @@ void RayTracer::setup(const std::string& file)
     printf("\tmaterials: %lu\n", materials.size());
     printf("\tlights: %lu\n", _scene->lights.size());
     printf("\tobjects: %lu\n", _scene->objects.size());
-
-    // _samples_per_pixel = 225;
-    _samples_per_pixel = 100;
 }
 
 void RayTracer::parseParams(const JsonBox::Value& val)
@@ -379,7 +376,7 @@ void RayTracer::fastRender()
     }
 }
 
-void RayTracer::render()
+void RayTracer::render(int n_sample)
 {
     for (const auto& c : _cameras) {
         int width = c->width;
@@ -388,7 +385,7 @@ void RayTracer::render()
 
         int cnt = 0;
 
-        int n = 10;
+        int n = (int)sqrt(n_sample);
         std::vector<Point> samples;
         double inv = 1.0 / n;
         double offset = inv / 2.0;
